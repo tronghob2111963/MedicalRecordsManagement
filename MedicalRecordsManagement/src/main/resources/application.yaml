@@ -1,0 +1,15 @@
+#spring:
+#  application:
+#    name: ${SPRING_APPLICATION_NAME:MedicalRecordsManagement}
+#  profiles:
+#    active: @spring.profiles.active@
+#  datasource:
+#    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/MedicalRecord}
+#    username: ${SPRING_DATASOURCE_USERNAME:root}
+#    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+#  jpa:
+#    hibernate:
+#      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+#    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+#server:
+#  port: ${SERVER_PORT:8080}
