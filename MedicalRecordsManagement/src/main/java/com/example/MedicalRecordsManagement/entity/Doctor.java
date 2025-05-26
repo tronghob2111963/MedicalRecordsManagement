@@ -2,13 +2,20 @@ package com.example.MedicalRecordsManagement.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+
+@Getter
+@Setter
 @Entity
 @Table(name = "Doctors")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+// Thêm default constructor
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

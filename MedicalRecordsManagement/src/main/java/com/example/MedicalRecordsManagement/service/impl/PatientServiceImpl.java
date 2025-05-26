@@ -55,6 +55,7 @@ public class PatientServiceImpl implements PatientService {
                         .address(Patient.getAddress())
                         .phone_Number(Patient.getPhone_Number())
                         .email(Patient.getEmail())
+                        .id_number(Patient.getId_number())
                         .build()
         ).toList();
 

@@ -9,6 +9,6 @@ openapi.service.api-docs=api-service
 
 
 jwt.expriMinutes=5
-jwt.expireDate=5
+jwt.expireDate=1
 jwt.accesskey=2mfGKBhdCa0K8X2uV1Fzn9o6sR8V0s5GUelGlxsFQAc=
 jwt.refreshkey=/AqIfLpfbWqy36D3VBmkskYtmnpsJrLpRx00WVRnJlE=

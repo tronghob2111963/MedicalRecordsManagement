@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "MedicalRecords": {
+    "medical-record-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/medical-records",
+            "outputPath": "dist/medical-record-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -32,7 +32,9 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],
             "scripts": []
           },
@@ -64,10 +66,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "MedicalRecords:build:production"
+              "buildTarget": "medical-record-frontend:build:production"
             },
             "development": {
-              "buildTarget": "MedicalRecords:build:development"
+              "buildTarget": "medical-record-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -91,7 +93,9 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],
             "scripts": []
           }
@@ -100,6 +104,6 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "9e9b15a4-98c3-4fed-972a-be760d1bcfb0"
   }
 }

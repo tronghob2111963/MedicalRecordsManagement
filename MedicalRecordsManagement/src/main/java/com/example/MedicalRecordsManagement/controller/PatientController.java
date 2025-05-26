@@ -5,19 +5,26 @@ import com.example.MedicalRecordsManagement.dto.response.PageResponse;
 import com.example.MedicalRecordsManagement.dto.response.ResponseData;
 import com.example.MedicalRecordsManagement.dto.response.ResponseError;
 import com.example.MedicalRecordsManagement.service.PatientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 
 @Slf4j
 @RestController
 @RequestMapping("/patient")
+@Tag(name = "Patient", description = "Patient API")
 @RequiredArgsConstructor
 public class PatientController {
     private final PatientService patientService;
 
     @GetMapping("/all-patients")
+    @Operation(summary = "Get all patients")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> getAllPatients(@RequestParam(defaultValue = "1") int pageNo,
                                           @RequestParam(defaultValue = "10") int pageSize,
                                           @RequestParam(defaultValue = "ID:asc") String sortBy) {
@@ -32,7 +39,9 @@ public class PatientController {
     }
 
     @GetMapping("/patient/{id}")
-    public ResponseData<?> getPatientById(@RequestParam Long id) {
+    @Operation(summary = "Get patient by ID")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseData<?> getPatientById(@PathVariable Long id) {
         log.info("Fetching patient with ID: {}", id);
         try {
             return new ResponseData<>(HttpStatus.OK.value(), "Success",
@@ -44,6 +53,8 @@ public class PatientController {
     }
 
     @PostMapping("/create-patient")
+    @Operation(summary = "Create a new patient")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> createPatient(PatientRequestDTO patientDTO) {
         log.info("Creating new patient: {}", patientDTO);
         try {
@@ -55,6 +66,8 @@ public class PatientController {
         }
     }
     @PutMapping("/update-patient")
+    @Operation(summary = "Update a patient")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> updatePatient(@RequestParam String id_number, PatientRequestDTO patientDTO) {
         log.info("Updating patient with ID_number: {}", id_number);
         try {
@@ -67,7 +80,9 @@ public class PatientController {
     }
 
     @DeleteMapping("/delete-patient/{id}")
-    public ResponseData<?> deletePatient(@RequestParam Long id) {
+    @Operation(summary = "Delete a patient")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseData<?> deletePatient(@PathVariable Long id) {
         log.info("Deleting patient with ID: {}", id);
         try {
             patientService.deletePatient(id);

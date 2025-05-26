@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class PatientResponseDTO {
+
     private String full_Name;
     private String gender;
     private String Date_Of_Birth;
@@ -13,6 +14,7 @@ public class PatientResponseDTO {
     private String phone_Number;
     private String email;
     private String image;
+    private String id_number;
 
 
 }
