@@ -15,6 +15,10 @@ public class PatientResponseDTO {
     private String email;
     private String image;
     private String id_number;
+    private String blood_type;
+    private String marital_status;
+    private String occupation;
+    private String allergies;
 
 
 }

@@ -32,7 +32,7 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
-    private String[] WHITELIST = {"/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/auth/**"};
+    private String[] WHITELIST = {"/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/auth/**" ,"/patient/**","/user/**"};
     private final CustomizeRequestFilter customizeRequestFilter;
     private final UserServiceDetail userServiceDetail;
 
@@ -55,7 +55,7 @@ public class AppConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("**")
-                        .allowedOrigins("http://localhost:8500")
+                        .allowedOrigins("http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE") // Allowed HTTP methods
                         .allowedHeaders("*") // Allowed request headers
                         .allowCredentials(false)

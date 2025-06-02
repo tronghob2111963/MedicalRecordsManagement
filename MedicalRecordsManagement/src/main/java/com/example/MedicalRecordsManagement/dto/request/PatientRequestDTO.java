@@ -12,11 +12,14 @@ public class PatientRequestDTO {
     private String address;
     private String id_Number;
     private String email;
+    private String blood_type;
+    private String marital_status;
+    private String occupation;
+    private String allergies;
+
 }
-//FullName NVARCHAR(100) NOT NULL,
-//DateOfBirth DATE,
-//Gender NVARCHAR(10),
-//PhoneNumber VARCHAR(15),
-//Address NVARCHAR(200),
-//IDNumber VARCHAR(20) UNIQUE,
-//Email VARCHAR(100),
+//ALTER TABLE Patients
+//ADD COLUMN blood_type NVARCHAR(5),
+//ADD COLUMN marital_status NVARCHAR(20),
+//ADD COLUMN occupation NVARCHAR(100),
+//ADD COLUMN allergies NVARCHAR(500);

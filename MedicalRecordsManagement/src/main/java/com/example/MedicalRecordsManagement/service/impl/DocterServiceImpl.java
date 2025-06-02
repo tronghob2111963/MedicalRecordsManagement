@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class DocterServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
+
+
     @Override
     public PageResponse<?> getAllDoctors(int pageNo, int pageSize, String sortBy) {
         int p = pageNo > 0 ? pageNo - 1 : 0;

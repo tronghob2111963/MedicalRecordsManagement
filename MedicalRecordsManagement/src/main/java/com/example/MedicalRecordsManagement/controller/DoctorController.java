@@ -68,6 +68,7 @@ public class DoctorController {
         }
     }
 
+
     @PutMapping("/update-doctor")
     @Operation(summary = "Update an existing doctor")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -96,5 +97,4 @@ public class DoctorController {
             return new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error deleting doctor: " + e.getMessage());
         }
     }
-
 }

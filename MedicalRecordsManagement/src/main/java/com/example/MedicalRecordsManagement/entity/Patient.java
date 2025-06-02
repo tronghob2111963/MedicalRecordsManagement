@@ -18,7 +18,7 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private Integer ID;
+    private Long ID;
 
     @Column(nullable = false, length = 100)
     private String full_Name;
@@ -43,5 +43,28 @@ public class Patient {
     @Column(length = 100)
     private String image;
 
+    @Column(length = 20)
+    private String blood_type;
+
+    @Column(length = 20)
+    private String marital_status;
+
+    @Column(length = 100)
+    private String occupation;
+
+    @Column(length = 500)
+    private String allergies;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+
+
 
 }
+
+//ALTER TABLE Patients
+//ADD COLUMN blood_type NVARCHAR(5),
+//ADD COLUMN marital_status NVARCHAR(20),
+//ADD COLUMN occupation NVARCHAR(100),
+//ADD COLUMN allergies NVARCHAR(500);

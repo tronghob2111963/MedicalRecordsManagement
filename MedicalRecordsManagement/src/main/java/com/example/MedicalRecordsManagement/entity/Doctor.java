@@ -20,7 +20,7 @@ public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private Integer Id;
+    private Long Id;
 
     @Column(nullable = false, length = 100)
     private String full_name;
@@ -39,5 +39,8 @@ public class Doctor {
 
     @Column(length = 20)
     private String status = "Active";
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
 }

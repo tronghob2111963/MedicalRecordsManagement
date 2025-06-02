@@ -1,0 +1,15 @@
+
+.group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.group-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #343a40;
+}

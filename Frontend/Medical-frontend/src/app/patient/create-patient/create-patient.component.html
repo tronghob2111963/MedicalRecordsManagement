@@ -1,0 +1,215 @@
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <!-- Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-plus-fill me-2 fs-4"></i>
+                        <h4 class="mb-0">Thêm Bệnh Nhân Mới</h4>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #patientForm="ngForm" novalidate>
+                        <!-- Thông tin cá nhân -->
+                        <div class="section-header">
+                            <h5 class="section-title">
+                                <i class="bi bi-person-circle me-2"></i>
+                                Thông Tin Cá Nhân
+                            </h5>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Họ và tên -->
+                            <div class="col-md-6">
+                                <label for="fullName" class="form-label required">Họ và Tên</label>
+                                <input type="text" class="form-control" id="full_Name" name="full_Name"
+                                    [(ngModel)]="patient.full_Name"
+                                #fullName="ngModel" required
+                                [class.is-invalid]="fullName.invalid && fullName.touched"
+                                placeholder="Nguyễn Văn A">
+                                <div class="invalid-feedback" *ngIf="fullName.invalid && fullName.touched">
+                                    Vui lòng nhập họ và tên
+                                </div>
+                            </div>
+
+                            <!-- Ngày sinh -->
+                            <div class="col-md-6">
+                                <label for="dateOfBirth" class="form-label required">Ngày Sinh</label>
+                                <input type="date" class="form-control" id="dateOfBirth" name="date_Of_Birth"
+                                    [(ngModel)]="patient.date_of_birth"
+                                #dateOfBirth="ngModel" required
+                                [class.is-invalid]="dateOfBirth.invalid && dateOfBirth.touched">
+                                <div class="invalid-feedback" *ngIf="dateOfBirth.invalid && dateOfBirth.touched">
+                                    Vui lòng chọn ngày sinh
+                                </div>
+                            </div>
+
+                            <!-- Giới tính -->
+                            <div class="col-md-6">
+                                <label for="gender" class="form-label required">Giới Tính</label>
+                                <select class="form-select" id="gender" name="gender" [(ngModel)]="patient.gender"
+                                    #gender="ngModel" required [class.is-invalid]="gender.invalid && gender.touched">
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="MALE">Nam</option>
+                                    <option value="FEMALE">Nữ</option>
+                                    <option value="OTHER">Khác</option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="gender.invalid && gender.touched">
+                                    Vui lòng chọn giới tính
+                                </div>
+                            </div>
+
+                            <!-- Số điện thoại -->
+                            <div class="col-md-6">
+                                <label for="phone_Number" class="form-label required">Số Điện Thoại</label>
+                                <input type="tel" class="form-control" id="phone_Number" name="phone_Number"
+                                    [(ngModel)]="patient.phone_Number"
+                                #phoneNumber="ngModel" required pattern="[0-9]{10,11}"
+                                [class.is-invalid]="phoneNumber.invalid && phoneNumber.touched"
+                                placeholder="0123456789">
+                                <div class="invalid-feedback" *ngIf="phoneNumber.invalid && phoneNumber.touched">
+                                    Vui lòng nhập số điện thoại hợp lệ (10-11 số)
+                                </div>
+                            </div>
+
+                            <!-- Địa chỉ -->
+                            <div class="col-12">
+                                <label for="address" class="form-label required">Địa Chỉ</label>
+                                <textarea class="form-control" id="address" name="address" [(ngModel)]="patient.address"
+                                    #address="ngModel" required rows="2"
+                                    [class.is-invalid]="address.invalid && address.touched"
+                                    placeholder="123 Đường ABC, Phường XYZ, Quận/Huyện, Tỉnh/Thành phố"></textarea>
+                                <div class="invalid-feedback" *ngIf="address.invalid && address.touched">
+                                    Vui lòng nhập địa chỉ
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin định danh -->
+                        <div class="section-header">
+                            <h5 class="section-title">
+                                <i class="bi bi-card-text me-2"></i>
+                                Thông Tin Định Danh
+                            </h5>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Số CCCD/CMND -->
+                            <div class="col-md-6">
+                                <label for="id_Numberr" class="form-label required">Số CCCD/CMND</label>
+                                <input type="text" class="form-control" id="id_Number" name="id_Number"
+                                    [(ngModel)]="patient.id_Number"
+                                #id_Number="ngModel" required pattern="[0-9]{9,12}"
+                                [class.is-invalid]="id_Number.invalid && id_Number.touched"
+                                placeholder="123456789012">
+                                <div class="invalid-feedback" *ngIf="id_Number.invalid && id_Number.touched">
+                                    Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    [(ngModel)]="patient.email"
+                                #email="ngModel" email
+                                [class.is-invalid]="email.invalid && email.touched" placeholder="example@gmail.com">
+                                <div class="invalid-feedback" *ngIf="email.invalid && email.touched">
+                                    Vui lòng nhập email hợp lệ
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin y tế -->
+                        <div class="section-header">
+                            <h5 class="section-title">
+                                <i class="bi bi-heart-pulse me-2"></i>
+                                Thông Tin Y Tế
+                            </h5>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Nhóm máu -->
+                            <div class="col-md-4">
+                                <label for="blood_type" class="form-label">Nhóm Máu</label>
+                                <select class="form-select" id="blood_type" name="blood_type"
+                                    [(ngModel)]="patient.blood_type"
+                                    >
+                                    <option value="">Chọn nhóm máu</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="UNKNOWN">Không rõ</option>
+                                </select>
+                            </div>
+
+                            <!-- Tình trạng hôn nhân -->
+                            <div class="col-md-4">
+                                <label for="marital_status" class="form-label">Tình Trạng Hôn Nhân</label>
+                                <select class="form-select" id="marital_status" name="marital_status"
+                                    [(ngModel)]="patient.marital_status"
+                                    >
+                                    <option value="">Chọn tình trạng</option>
+                                    <option value="SINGLE">Độc thân</option>
+                                    <option value="MARRIED">Đã kết hôn</option>
+                                    <option value="DIVORCED">Đã ly hôn</option>
+                                    <option value="WIDOWED">Góa</option>
+                                    <option value="SEPARATED">Ly thân</option>
+                                    <option value="UNKNOWN">Không rõ</option>
+                                </select>
+                            </div>
+
+                            <!-- Nghề nghiệp -->
+                            <div class="col-md-4">
+                                <label for="occupation" class="form-label">Nghề Nghiệp</label>
+                                <input type="text" class="form-control" id="occupation" name="occupation"
+                                    [(ngModel)]="patient.occupation"
+                                placeholder="Bác sĩ, Kỹ sư, ...">
+                            </div>
+
+                            <!-- Dị ứng -->
+                            <div class="col-12">
+                                <label for="allergies" class="form-label">Tiền Sử Dị Ứng</label>
+                                <textarea class="form-control" id="allergies" name="allergies"
+                                    [(ngModel)]="patient.allergies"
+                                    rows="2" placeholder="Dị ứng thuốc, thực phẩm, ... (nếu có)"></textarea>
+                                <small class="form-text text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Vui lòng ghi rõ các loại dị ứng đã biết để đảm bảo an toàn điều trị
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <button type="button" class="btn btn-outline-secondary btn-lg" (click)="onCancel()"
+                                [disabled]="isLoading">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Hủy
+                            </button>
+                            <button type="button" class="btn btn-warning btn-lg" (click)="resetForm()"
+                                [disabled]="isLoading">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                Làm mới
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg"
+                                [disabled]="patientForm.invalid || isLoading">
+                                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                <i class="bi bi-check-circle me-2" *ngIf="!isLoading"></i>
+                                {{ isLoading ? 'Đang lưu...' : 'Lưu Bệnh Nhân' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

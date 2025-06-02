@@ -32,8 +32,10 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PageResponse<?> getAllPatients(int pageNo, int pageSize, String sortBy) {
+
         int p = pageNo > 0 ? pageNo - 1 : 0;
         List<Sort.Order> sorts = new ArrayList<>();
+        // Sort by ID
         if (StringUtils.hasLength(sortBy)) {
             Pattern pattern = Pattern.compile("(\\w+?)(:)(.*)");
             Matcher matcher = pattern.matcher(sortBy);
@@ -45,6 +47,7 @@ public class PatientServiceImpl implements PatientService {
                 }
             }
         }
+
         Pageable pageable = PageRequest.of(p, pageSize, Sort.by(sorts));
         Page<Patient> patients = patientRepository.findAll(pageable);
         List<PatientResponseDTO> patientResponse = patients.stream().map(
@@ -56,6 +59,10 @@ public class PatientServiceImpl implements PatientService {
                         .phone_Number(Patient.getPhone_Number())
                         .email(Patient.getEmail())
                         .id_number(Patient.getId_number())
+                        .blood_type(Patient.getBlood_type())
+                        .marital_status(Patient.getMarital_status())
+                        .occupation(Patient.getOccupation())
+                        .allergies(Patient.getAllergies())
                         .build()
         ).toList();
 
@@ -102,6 +109,8 @@ public class PatientServiceImpl implements PatientService {
             throw new RuntimeException("Patient with ID: " + patientDTO.getId_Number() + " already exists");
 
         }
+
+        // Create a new patient
         Patient patient = Patient.builder()
                 .full_Name(patientDTO.getFull_Name())
                 .Date_Of_Birth(LocalDate.parse(patientDTO.getDate_of_birth()))
@@ -110,8 +119,13 @@ public class PatientServiceImpl implements PatientService {
                 .address(patientDTO.getAddress())
                 .email(patientDTO.getEmail())
                 .id_number(patientDTO.getId_Number())
+                .blood_type(patientDTO.getBlood_type())
+                .marital_status(patientDTO.getMarital_status())
+                .occupation(patientDTO.getOccupation())
+                .allergies(patientDTO.getAllergies())
                 .build();
         patientRepository.save(patient);
+        // Return the created patient
         return PatientResponseDTO.builder()
                 .full_Name(patient.getFull_Name())
                 .gender(patient.getGender())
@@ -119,6 +133,11 @@ public class PatientServiceImpl implements PatientService {
                 .address(patient.getAddress())
                 .phone_Number(patient.getPhone_Number())
                 .email(patient.getEmail())
+                .id_number(patient.getId_number())
+                .blood_type(patient.getBlood_type())
+                .marital_status(patient.getMarital_status())
+                .occupation(patient.getOccupation())
+                .allergies(patient.getAllergies())
                 .build();
     }
 
@@ -148,6 +167,10 @@ public class PatientServiceImpl implements PatientService {
                 .address(patient.getAddress())
                 .phone_Number(patient.getPhone_Number())
                 .email(patient.getEmail())
+                .blood_type(patient.getBlood_type())
+                .marital_status(patient.getMarital_status())
+                .occupation(patient.getOccupation())
+                .allergies(patient.getAllergies())
                 .build();
     }
 

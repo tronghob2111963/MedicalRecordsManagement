@@ -24,7 +24,7 @@ public class PatientController {
 
     @GetMapping("/all-patients")
     @Operation(summary = "Get all patients")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> getAllPatients(@RequestParam(defaultValue = "1") int pageNo,
                                           @RequestParam(defaultValue = "10") int pageSize,
                                           @RequestParam(defaultValue = "ID:asc") String sortBy) {
@@ -40,7 +40,7 @@ public class PatientController {
 
     @GetMapping("/patient/{id}")
     @Operation(summary = "Get patient by ID")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> getPatientById(@PathVariable Long id) {
         log.info("Fetching patient with ID: {}", id);
         try {
@@ -54,7 +54,7 @@ public class PatientController {
 
     @PostMapping("/create-patient")
     @Operation(summary = "Create a new patient")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> createPatient(PatientRequestDTO patientDTO) {
         log.info("Creating new patient: {}", patientDTO);
         try {
@@ -67,7 +67,7 @@ public class PatientController {
     }
     @PutMapping("/update-patient")
     @Operation(summary = "Update a patient")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> updatePatient(@RequestParam String id_number, PatientRequestDTO patientDTO) {
         log.info("Updating patient with ID_number: {}", id_number);
         try {
@@ -81,7 +81,7 @@ public class PatientController {
 
     @DeleteMapping("/delete-patient/{id}")
     @Operation(summary = "Delete a patient")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> deletePatient(@PathVariable Long id) {
         log.info("Deleting patient with ID: {}", id);
         try {

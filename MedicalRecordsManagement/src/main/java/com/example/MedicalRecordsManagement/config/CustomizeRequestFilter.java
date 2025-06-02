@@ -32,7 +32,18 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("{} {}", request.getMethod(), request.getRequestURI());
+        // Thêm header CORS cho tất cả các phản hồi
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200"); // Chỉ định origin cho phép
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Phương thức được cho phép
+        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type"); // Header được cho phép
+        response.setHeader("Access-Control-Allow-Credentials", "true"); // Cho phép gửi cookie/header xác thực
+        response.setHeader("Access-Control-Max-Age", "3600"); // Thời gian cache pre-flight request
 
+        // Xử lý pre-flight request (OPTIONS)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             authHeader = authHeader.substring(7); // Remove "Bearer " prefix
@@ -40,7 +51,7 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
 
             String username = "";
             try {
-                 username = jwtService.extractUsername(authHeader, TokenType.ACCESS_TOKEN);
+                username = jwtService.extractUsername(authHeader, TokenType.ACCESS_TOKEN);
                 log.info("Username: {}", username);
 
             } catch (Exception e) {
@@ -53,6 +64,8 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities()
             );
+            // Set details for the authentication object
+
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             securityContext.setAuthentication(authentication);
             SecurityContextHolder.setContext(securityContext);
@@ -60,6 +73,7 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
             return;
 
         }
+
 
         filterChain.doFilter(request, response);
     }
