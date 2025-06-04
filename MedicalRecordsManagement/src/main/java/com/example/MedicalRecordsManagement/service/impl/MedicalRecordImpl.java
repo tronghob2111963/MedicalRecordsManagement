@@ -1,5 +1,6 @@
 package com.example.MedicalRecordsManagement.service.impl;
 
+import com.example.MedicalRecordsManagement.common.MedicalRecordStatus;
 import com.example.MedicalRecordsManagement.dto.request.MedicalRecordRequestDTO;
 import com.example.MedicalRecordsManagement.dto.response.MedicalRecordReponseDTO;
 import com.example.MedicalRecordsManagement.dto.response.PageResponse;
@@ -35,12 +36,15 @@ public class MedicalRecordImpl implements MedicalRecordService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
 
+
+    //tao moi medical record
     @Override
     public MedicalRecordReponseDTO createMedicalRecord(MedicalRecordRequestDTO request) {
         log.info("Creating medical record for patient ID: {}", request.getPatient_id(),request.getDotor_id(), request.getNote());
         Long patientId = request.getPatient_id();
         Long doctorId = request.getDotor_id();
         String note = request.getNote();
+        String status = request.getStatus();
 
        if(patientId == null){
            log.error("Patient ID is null");
@@ -61,14 +65,16 @@ public class MedicalRecordImpl implements MedicalRecordService {
         MedicalRecord medicalRecord = MedicalRecord.builder()
                         .patient_id(patient)
                         .doctor_id(doctor)
+                        .status(MedicalRecordStatus.valueOf(status))
                         .note(note)
                         .build();
         medicalRecordRepository.save(medicalRecord);
         MedicalRecordReponseDTO response = MedicalRecordReponseDTO.builder()
                 .id(medicalRecord.getId())
-                .patient_id(medicalRecord.getPatient_id().getID())
-                .dotor_id(medicalRecord.getDoctor_id().getId())
+                .patient_Name(medicalRecord.getPatient_id().getFull_Name())
+                .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
                 .Note(medicalRecord.getNote())
+                .status(medicalRecord.getStatus().toString())
                 .build();
         return response;
 
@@ -94,9 +100,10 @@ public class MedicalRecordImpl implements MedicalRecordService {
         List<MedicalRecordReponseDTO> medicalRecordReponseDTOS = medicalRecords.stream().map(
                 medicalRecord -> MedicalRecordReponseDTO.builder()
                         .id(medicalRecord.getId())
-                        .patient_id(medicalRecord.getPatient_id().getID())
-                        .dotor_id(medicalRecord.getDoctor_id().getId())
+                        .patient_Name(medicalRecord.getPatient_id().getFull_Name())
+                        .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
                         .Note(medicalRecord.getNote())
+                        .status(medicalRecord.getStatus().toString())
                         .build()
         ).toList();
         return PageResponse.builder()
@@ -108,6 +115,8 @@ public class MedicalRecordImpl implements MedicalRecordService {
                 .build();
     }
 
+
+    //tim kiem medical record theo patient_id
     @Override
     public PageResponse<?> getMedicalRecordsByPatientId(Long patientId, int pageNo, int pageSize, String sortBy) {
         int p = pageNo > 0 ? pageNo - 1 : 0;
@@ -128,9 +137,10 @@ public class MedicalRecordImpl implements MedicalRecordService {
         List<MedicalRecordReponseDTO> medicalRecordReponseDTOS = medicalRecords.stream().map(
                 medicalRecord -> MedicalRecordReponseDTO.builder()
                         .id(medicalRecord.getId())
-                        .patient_id(medicalRecord.getPatient_id().getID())
-                        .dotor_id(medicalRecord.getDoctor_id().getId())
+                        .patient_Name(medicalRecord.getPatient_id().getFull_Name())
+                        .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
                         .Note(medicalRecord.getNote())
+                        .status(medicalRecord.getStatus().toString())
                         .build()
         ).toList();
         return PageResponse.builder()
@@ -144,13 +154,94 @@ public class MedicalRecordImpl implements MedicalRecordService {
 
     }
 
+
+    //tim kiem medical record theo doctor_id
     @Override
-    public PageResponse<?> getMedicalRecordsByDoctorId(Long doctorId, int page, int size, String sortBy) {
-        return null;
+    public PageResponse<?> getMedicalRecordsByDoctorId(Long doctorId, int pageNo, int pageSize, String sortBy) {
+        int p = pageNo > 0 ? pageNo - 1 : 0;
+        List<Sort.Order> sorts = new ArrayList<>();
+        if (StringUtils.hasLength(sortBy)) {
+            Pattern pattern = Pattern.compile("(\\w+?)(:)(.*)");
+            Matcher matcher = pattern.matcher(sortBy);
+            if (matcher.find()) {
+                if (matcher.group(3).equalsIgnoreCase("asc")) {
+                    sorts.add(new Sort.Order(Sort.Direction.ASC, matcher.group(1)));
+                } else {
+                    sorts.add(new Sort.Order(Sort.Direction.DESC, matcher.group(1)));
+                }
+            }
+        }
+        Pageable pageable = PageRequest.of(p, pageSize, Sort.by(sorts));
+        Page<MedicalRecord> medicalRecords = medicalRecordRepository.findByDoctor_id_Id(doctorId, pageable);
+        List<MedicalRecordReponseDTO> medicalRecordReponseDTOS = medicalRecords.stream().map(
+                medicalRecord -> MedicalRecordReponseDTO.builder()
+                        .id(medicalRecord.getId())
+                        .patient_Name(medicalRecord.getPatient_id().getFull_Name())
+                        .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
+                        .Note(medicalRecord.getNote())
+                        .status(medicalRecord.getStatus().toString())
+                        .build()
+        ).toList();
+        return PageResponse.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .totalElements(medicalRecords.getTotalElements())
+                .totalPages(medicalRecords.getTotalPages())
+                .items(medicalRecordReponseDTOS)
+                .build();
+    }
+
+
+    //cap nhat medical record
+    @Override
+    public MedicalRecordReponseDTO updateMedicalRecord(Long id, MedicalRecordRequestDTO medicalRecordRequestDTO) {
+        log.info("Updating medical record with ID: {}", id);
+        if( id == null) {
+            log.error("Medical record ID cannot be null");
+            throw new IllegalArgumentException("Medical record ID cannot be null");
+        }
+        MedicalRecord medicalRecord = medicalRecordRepository.findById(id).orElse(null);
+        if (medicalRecord == null) {
+            log.error("Medical record not found with ID: {}", id);
+            throw new IllegalArgumentException("Medical record not found with ID: " + id);
+        }
+        if(medicalRecordRequestDTO.getDotor_id() == null) {
+            log.error("Doctor ID cannot be null");
+            throw new IllegalArgumentException("Doctor ID cannot be null");
+        }
+
+        Doctor doctor_id = doctorRepository.findById(medicalRecordRequestDTO.getDotor_id())
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with ID: " + medicalRecordRequestDTO.getDotor_id()));
+
+        Patient patient_id = patientRepository.findById(medicalRecordRequestDTO.getPatient_id())
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found with ID: " + medicalRecordRequestDTO.getPatient_id()));
+        medicalRecord.setDoctor_id(doctor_id);
+        medicalRecord.setNote(medicalRecordRequestDTO.getNote());
+        medicalRecord.setStatus(MedicalRecordStatus.valueOf(medicalRecordRequestDTO.getStatus()));
+        MedicalRecord updatedMedicalRecord = medicalRecordRepository.save(medicalRecord);
+
+        MedicalRecordReponseDTO result = MedicalRecordReponseDTO.builder()
+                .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
+                .Note(updatedMedicalRecord.getNote())
+                .status(updatedMedicalRecord.getStatus().toString())
+                .build();
+        return result;
     }
 
     @Override
-    public MedicalRecordReponseDTO updateMedicalRecord(Long id, MedicalRecordRequestDTO medicalRecordRequestDTO) {
-        return null;
+    public void deleteMedicalRecord(Long id) {
+        log.info("Deleting medical record with ID: {}", id);
+        if (id == null) {
+            log.error("Medical record ID cannot be null");
+            throw new IllegalArgumentException("Medical record ID cannot be null");
+        }
+        MedicalRecord medicalRecord = medicalRecordRepository.findById(id).orElse(null);
+        if (medicalRecord == null) {
+            log.error("Medical record not found with ID: {}", id);
+            throw new IllegalArgumentException("Medical record not found with ID: " + id);
+        }
+        medicalRecordRepository.delete(medicalRecord);
     }
+
+
 }

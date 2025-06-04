@@ -1,8 +1,11 @@
 package com.example.MedicalRecordsManagement.common;
 
 public enum MedicalRecordStatus {
-    PENDING,
-    APPROVED,
-    REJECTED,
-    ARCHIVED;
+
+   //dang dieu tri
+    Under_treatment,
+    //da hoan thanh
+    Completed,
+    //nguy kich
+    Tragic
 }

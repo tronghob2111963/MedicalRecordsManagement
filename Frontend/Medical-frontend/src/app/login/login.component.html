@@ -1,12 +1,55 @@
 <div class="body">
-    <div class="loginBox"> <img class="user" src="https://i.ibb.co/yVGxFPR/2.png" height="100px" width="100px">
-        <h3>Sign in</h3>
-        <form routerLink="/patient" method="post">
-            <div class="inputBox"> <input id="uname" type="text" name="Username" placeholder="Username"> <input id="pass"
-                    type="password" name="Password" placeholder="Password"> 
-                </div> 
-                    <input type="submit" name="" 
-                            value="Login">
-        </form>
+    <div class="loginBox">
+        <img class="user" src="https://i.ibb.co/yVGxFPR/2.png" height="100px" width="100px">
+        <h3>Welcome Back</h3>
+
+        <!-- Hiển thị thông báo lỗi nếu có -->
+        <div *ngIf="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ errorMessage }}
         </div>
+
+        <!-- Hiển thị thông báo thành công nếu có -->
+        <div *ngIf="successMessage" class="success-message">
+            <i class="fas fa-check-circle"></i>
+            {{ successMessage }}
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="inputBox">
+                <div class="input-group">
+                    <input id="username" type="text" formControlName="username" placeholder=" "
+                        [class.error]="username?.invalid && username?.touched">
+                    <label for="username">👤 Username</label>
+                </div>
+
+                <!-- Hiển thị lỗi validation cho username -->
+                <div *ngIf="username?.invalid && username?.touched" class="field-error">
+                    <small>
+                        <span *ngIf="username?.errors?.['required']">Username là bắt buộc</span>
+                        <span *ngIf="username?.errors?.['minlength']">Username phải có ít nhất 3 ký tự</span>
+                    </small>
+                </div>
+
+                <div class="input-group">
+                    <input id="password" type="password" formControlName="password" placeholder=" "
+                        [class.error]="password?.invalid && password?.touched">
+                    <label for="password">🔒 Password</label>
+                </div>
+
+                <!-- Hiển thị lỗi validation cho password -->
+                <div *ngIf="password?.invalid && password?.touched" class="field-error">
+                    <small>
+                        <span *ngIf="password?.errors?.['required']">Password là bắt buộc</span>
+                        <span *ngIf="password?.errors?.['minlength']">Password phải có ít nhất 6 ký tự</span>
+                    </small>
+                </div>
+            </div>
+
+            <input type="submit" [value]="isLoading ? '⏳ Đang đăng nhập...' : '🚀 Sign In'" [disabled]="isLoading"
+                [class.loading]="isLoading">
+
+            <!-- Forgot password link -->
+        </form>
+    </div>
 </div>

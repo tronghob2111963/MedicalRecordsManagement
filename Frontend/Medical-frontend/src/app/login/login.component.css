@@ -1,129 +1,301 @@
-/* .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  padding: 20px;
-} */
-
-body {
+/* Background và layout chính */
+.body {
     margin: 0;
     padding: 0;
-    background: url(https://i.ibb.co/VQmtgjh/6845078.png) no-repeat;
-    height: 100vh;
-    font-family: sans-serif;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    overflow: hidden
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-@media screen and (
-    max-width: 600px
-     ) {
-    body {
-        background-size: cover;
-        background-attachment: fixed
+/* Container chính cho form login */
+.loginBox {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.loginBox:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+/* Avatar/User image */
+.user {
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 4px solid #667eea;
+    transition: transform 0.3s ease;
+}
+
+.user:hover {
+    transform: scale(1.05);
+}
+
+/* Tiêu đề */
+h3 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+/* Container cho các input */
+.inputBox {
+    margin-bottom: 25px;
+}
+
+/* Styling cho input fields */
+.inputBox input[type="text"],
+.inputBox input[type="password"] {
+    width: 100%;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border: 2px solid #e1e8ed;
+    border-radius: 12px;
+    font-size: 16px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.inputBox input[type="text"]:focus,
+.inputBox input[type="password"]:focus {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.inputBox input[type="text"]:hover,
+.inputBox input[type="password"]:hover {
+    border-color: #8fa4f3;
+    background: white;
+}
+
+/* Input với lỗi validation */
+.inputBox input.error {
+    border-color: #e74c3c;
+    background-color: #fdf2f2;
+}
+
+.inputBox input.error:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* Placeholder styling */
+.inputBox input::placeholder {
+    color: #adb5bd;
+    font-weight: 300;
+}
+
+/* Submit button */
+input[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+}
+
+input[type="submit"]:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+input[type="submit"]:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Error và Success messages */
+.error-message {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    animation: slideInDown 0.3s ease;
+}
+
+.success-message {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    animation: slideInDown 0.3s ease;
+}
+
+/* Field error messages */
+.field-error {
+    text-align: left;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.field-error small {
+    color: #e74c3c;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Loading animation */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: loading 1.5s infinite;
+}
+
+/* Animations */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-#particles-js {
-    height: 100%
+@keyframes loading {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
 }
 
-.loginBox {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 350px;
-    min-height: 200px;
-    background: #fff;
-    border-radius: 10px;
-    padding: 40px;
-    box-sizing: border-box;
-    box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+/* Responsive design */
+@media (max-width: 480px) {
+    .loginBox {
+        margin: 20px;
+        padding: 30px 25px;
+        max-width: none;
+    }
 
+    h3 {
+        font-size: 24px;
+    }
+
+    .inputBox input[type="text"],
+    .inputBox input[type="password"] {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+
+    input[type="submit"] {
+        padding: 12px;
+        font-size: 14px;
+    }
 }
 
-.user {
-    margin: 0 auto;
-    display: block;
-    margin-bottom: 20px
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .loginBox {
+        background: rgba(30, 30, 30, 0.95);
+        color: white;
+    }
+
+    h3 {
+        color: white;
+    }
+
+    .inputBox input[type="text"],
+    .inputBox input[type="password"] {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: white;
+    }
+
+    .inputBox input[type="text"]:focus,
+    .inputBox input[type="password"]:focus {
+        background: #1a202c;
+    }
+
+    .inputBox input::placeholder {
+        color: #a0aec0;
+    }
 }
 
-h3 {
-    margin: 0;
-    padding: 0 0 20px;
-    color: #59238F;
-    text-align: center
+/* Floating label effect */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
 }
 
-.loginBox input {
+.input-group input {
     width: 100%;
-    margin-bottom: 20px
-}
-
-.loginBox input[type="text"],
-.loginBox input[type="password"] {
-    border: none;
-    border-bottom: 2px solid #262626;
-    outline: none;
-    height: 40px;
-    color: #fff;
-    background: transparent;
+    padding: 20px 20px 15px 20px;
+    border: 2px solid #e1e8ed;
+    border-radius: 12px;
     font-size: 16px;
-    padding-left: 20px;
-    box-sizing: border-box
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
 }
 
-.loginBox input[type="text"]:hover,
-.loginBox input[type="password"]:hover {
-    color: #59238F;
-    border-bottom: 2px solid #59238F;
-    /* box-shadow: 0 0 5px rgba(0, 255, 0, .3), 0 0 10px rgba(0, 255, 0, .2), 0 0 15px rgba(0, 255, 0, .1), 0 2px 0 black */
-}
-
-.loginBox input[type="text"]:focus,
-.loginBox input[type="password"]:focus {
-    border-bottom: 2px solid #59238F
-}
-
-.inputBox {
-    position: relative
-}
-
-.inputBox span {
+.input-group label {
     position: absolute;
-    top: 10px;
-    color: #262626;
-}
-
-.loginBox input[type="submit"] {
-    border: none;
-    outline: none;
-    height: 40px;
+    top: 20px;
+    left: 20px;
     font-size: 16px;
-    background: #59238F;
-    color: #fff;
-    border-radius: 20px;
-    cursor: pointer
+    color: #e1e8ed;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: transparent;
+    padding: 0 5px;
 }
 
-.loginBox a {
-    color: #262626;
-    font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
-    text-align: center;
-    display: block
-}
-
-a:hover {
-    color: #00ffff
-}
-
-p {
-    color: #0000ff
-}
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
+    top: -10px;
+    font-size: 12px;
+    color: #667eea;
+    background: white; }

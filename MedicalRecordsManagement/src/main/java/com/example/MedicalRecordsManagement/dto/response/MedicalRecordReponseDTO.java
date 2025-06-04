@@ -8,8 +8,9 @@ import lombok.Data;
 @Data
 public class MedicalRecordReponseDTO {
     private Long id;
-    private Long patient_id;
-    private Long dotor_id;
+    private String patient_Name;
+    private String doctor_Name;
     private String Note;
+    private String status;
 
 }

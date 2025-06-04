@@ -1,3 +1,4 @@
+
 .patient-card {
     transition: all 0.3s ease;
     border-left: 4px solid #007bff;
@@ -37,4 +38,4 @@
 
 .btn-action:hover {
     transform: scale(1.05);
-}
+} 

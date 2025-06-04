@@ -2,7 +2,8 @@ package com.example.MedicalRecordsManagement.service.impl;
 
 import com.example.MedicalRecordsManagement.dto.request.PatientRequestDTO;
 import com.example.MedicalRecordsManagement.dto.response.PageResponse;
-import com.example.MedicalRecordsManagement.dto.response.PatientResponseDTO;
+import com.example.MedicalRecordsManagement.dto.response.PatientDetailResponseDTO;
+import com.example.MedicalRecordsManagement.dto.response.PatientListResponseDTO;
 import com.example.MedicalRecordsManagement.entity.Patient;
 import com.example.MedicalRecordsManagement.repository.PatientRepository;
 import com.example.MedicalRecordsManagement.service.PatientService;
@@ -50,33 +51,27 @@ public class PatientServiceImpl implements PatientService {
 
         Pageable pageable = PageRequest.of(p, pageSize, Sort.by(sorts));
         Page<Patient> patients = patientRepository.findAll(pageable);
-        List<PatientResponseDTO> patientResponse = patients.stream().map(
-                Patient -> PatientResponseDTO.builder()
-                        .full_Name(Patient.getFull_Name())
-                        .gender(Patient.getGender())
-                        .Date_Of_Birth(Patient.getDate_Of_Birth().toString())
-                        .address(Patient.getAddress())
-                        .phone_Number(Patient.getPhone_Number())
-                        .email(Patient.getEmail())
-                        .id_number(Patient.getId_number())
-                        .blood_type(Patient.getBlood_type())
-                        .marital_status(Patient.getMarital_status())
-                        .occupation(Patient.getOccupation())
-                        .allergies(Patient.getAllergies())
+        List<PatientListResponseDTO> patient = patients.stream().map(patient1 ->
+                PatientListResponseDTO.builder()
+                        .full_Name(patient1.getFull_Name())
+                        .gender(patient1.getGender())
+                        .Date_Of_Birth(patient1.getDate_Of_Birth().toString())
+                        .address(patient1.getAddress())
+                        .phone_Number(patient1.getPhone_Number())
+
                         .build()
         ).toList();
-
         return PageResponse.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
                 .totalElements(patients.getTotalElements())
                 .totalPages(patients.getTotalPages())
-                .items(patientResponse)
+                .items(patient)
                 .build();
     }
 
     @Override
-    public PatientResponseDTO getPatientById(Long id) {
+    public PatientDetailResponseDTO getPatientById(Long id) {
         log.info("Fetching patient with ID: {}", id);
         if(id == null) {
             log.error("Patient ID is null");
@@ -87,7 +82,7 @@ public class PatientServiceImpl implements PatientService {
             log.error("Patient not found with ID: {}", id);
             throw new RuntimeException("Patient not found with ID: " + id);
         }
-        return PatientResponseDTO.builder()
+        return PatientDetailResponseDTO.builder()
                 .full_Name(patient.getFull_Name())
                 .gender(patient.getGender())
                 .Date_Of_Birth(patient.getDate_Of_Birth().toString())
@@ -98,7 +93,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PatientResponseDTO createPatient(PatientRequestDTO patientDTO) {
+    public PatientDetailResponseDTO createPatient(PatientRequestDTO patientDTO) {
         log.info("Creating new patient: {}", patientDTO);
         if (patientDTO == null) {
             log.error("Patient data is null");
@@ -126,7 +121,7 @@ public class PatientServiceImpl implements PatientService {
                 .build();
         patientRepository.save(patient);
         // Return the created patient
-        return PatientResponseDTO.builder()
+        return PatientDetailResponseDTO.builder()
                 .full_Name(patient.getFull_Name())
                 .gender(patient.getGender())
                 .Date_Of_Birth(patient.getDate_Of_Birth().toString())
@@ -142,7 +137,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PatientResponseDTO updatePatient(String id_number, PatientRequestDTO patientDTO) {
+    public PatientDetailResponseDTO updatePatient(String id_number, PatientRequestDTO patientDTO) {
         log.info("Updating patient with ID_number: {}", id_number);
         if(id_number == null) {
             log.error("Patient ID_number is null");
@@ -160,7 +155,7 @@ public class PatientServiceImpl implements PatientService {
         patient.setAddress(patientDTO.getAddress());
         patient.setEmail(patientDTO.getEmail());
         patientRepository.save(patient);
-        return PatientResponseDTO.builder()
+        return PatientDetailResponseDTO.builder()
                 .full_Name(patient.getFull_Name())
                 .gender(patient.getGender())
                 .Date_Of_Birth(patient.getDate_Of_Birth().toString())
@@ -186,6 +181,13 @@ public class PatientServiceImpl implements PatientService {
             throw new RuntimeException("Patient not found with ID: " + id);
         }
         patientRepository.deleteById(id);
+    }
+
+    @Override
+    public Long CoutnPatients() {
+    log.info("Counting total number of patients");
+        long count = patientRepository.count();
+        return count;
     }
 }
 

@@ -54,8 +54,8 @@ public class PatientController {
 
     @PostMapping("/create-patient")
     @Operation(summary = "Create a new patient")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseData<?> createPatient(PatientRequestDTO patientDTO) {
+
+    public ResponseData<?> createPatient(@RequestBody PatientRequestDTO patientDTO) {
         log.info("Creating new patient: {}", patientDTO);
         try {
             return new ResponseData<>(HttpStatus.OK.value(), "Success",

@@ -1,5 +1,6 @@
 package com.example.MedicalRecordsManagement.repository;
 
+import com.example.MedicalRecordsManagement.dto.response.ResponseData;
 import com.example.MedicalRecordsManagement.entity.MedicalRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,15 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Lo
 
     @Query("SELECT mr FROM MedicalRecord mr WHERE mr.patient_id.id = :patientId")
      Page<MedicalRecord> findByPatientId(Long patientId, Pageable pageable);
+
+    @Query("SELECT mr FROM MedicalRecord mr WHERE mr.doctor_id.id = :doctorId")
+    Page<MedicalRecord> findByDoctor_id_Id(Long doctorId, Pageable pageable);
+
+
+    //lay tên bệnh nhân từ medical record
+//   @Query("SELECT mr FROM MedicalRecord mr WHERE mr.id = :medicalRecordId")
+//    ResponseData<String> getPatientNameByMedicalRecordId(Long medicalRecordId, Pageable pageable);
+
 
 
 

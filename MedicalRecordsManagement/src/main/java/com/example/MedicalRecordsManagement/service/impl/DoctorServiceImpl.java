@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DocterServiceImpl implements DoctorService {
+public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
 
 
@@ -130,6 +130,8 @@ public class DocterServiceImpl implements DoctorService {
             log.error("Doctor not found with ID: {}", id);
             throw new RuntimeException("Doctor not found with ID: " + id);
         }
+
+        //set thông tin cho doctor
         doctor.setFull_name(doctorDTO.getFull_name());
         doctor.setSpecialty(doctorDTO.getSpecialty());
         doctor.setPhone_number(doctorDTO.getPhone_number());

@@ -2,14 +2,14 @@ package com.example.MedicalRecordsManagement.service;
 
 import com.example.MedicalRecordsManagement.dto.request.PatientRequestDTO;
 import com.example.MedicalRecordsManagement.dto.response.PageResponse;
-import com.example.MedicalRecordsManagement.dto.response.PatientResponseDTO;
+import com.example.MedicalRecordsManagement.dto.response.PatientDetailResponseDTO;
 
 public interface PatientService {
     PageResponse<?> getAllPatients(int pageNo, int pageSize, String sortBy);
-    PatientResponseDTO getPatientById(Long id);
-    PatientResponseDTO createPatient(PatientRequestDTO patientDTO);
-    PatientResponseDTO updatePatient(String id_number, PatientRequestDTO patientDTO);
+    PatientDetailResponseDTO getPatientById(Long id);
+    PatientDetailResponseDTO createPatient(PatientRequestDTO patientDTO);
+    PatientDetailResponseDTO updatePatient(String id_number, PatientRequestDTO patientDTO);
     void deletePatient(Long id);
-
+    Long CoutnPatients();
 
 }

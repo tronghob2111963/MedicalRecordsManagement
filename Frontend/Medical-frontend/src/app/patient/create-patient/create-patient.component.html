@@ -11,7 +11,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form (ngSubmit)="onSubmit()" #patientForm="ngForm" novalidate>
+                    <form #patientForm="ngForm" novalidate (ngSubmit)="onSubmit()">
                         <!-- Thông tin cá nhân -->
                         <div class="section-header">
                             <h5 class="section-title">
@@ -23,25 +23,23 @@
                         <div class="row g-3 mb-4">
                             <!-- Họ và tên -->
                             <div class="col-md-6">
-                                <label for="fullName" class="form-label required">Họ và Tên</label>
-                                <input type="text" class="form-control" id="full_Name" name="full_Name"
-                                    [(ngModel)]="patient.full_Name"
-                                #fullName="ngModel" required
-                                [class.is-invalid]="fullName.invalid && fullName.touched"
-                                placeholder="Nguyễn Văn A">
-                                <div class="invalid-feedback" *ngIf="fullName.invalid && fullName.touched">
-                                    Vui lòng nhập họ và tên
+                                <label for="full_Name" class="form-label required">Họ và Tên</label>
+                                <input type="text" class="form-control" [(ngModel)]="full_Name" id="full_Name"
+                                    name="full_Name" placeholder="Nguyễn Văn A" required #fullNameInput="ngModel"
+                                    [class.is-invalid]="fullNameInput.invalid && fullNameInput.touched">
+                                <div class="invalid-feedback" *ngIf="fullNameInput.invalid && fullNameInput.touched">
+                                    Vui lòng nhập họ và tên đầy đủ
                                 </div>
                             </div>
 
                             <!-- Ngày sinh -->
                             <div class="col-md-6">
-                                <label for="dateOfBirth" class="form-label required">Ngày Sinh</label>
-                                <input type="date" class="form-control" id="dateOfBirth" name="date_Of_Birth"
-                                    [(ngModel)]="patient.date_of_birth"
-                                #dateOfBirth="ngModel" required
-                                [class.is-invalid]="dateOfBirth.invalid && dateOfBirth.touched">
-                                <div class="invalid-feedback" *ngIf="dateOfBirth.invalid && dateOfBirth.touched">
+                                <label for="date_of_birth" class="form-label required">Ngày Sinh</label>
+                                <input type="date" class="form-control" [(ngModel)]="date_of_birth" id="date_of_birth"
+                                    name="date_of_birth" required #dateOfBirthInput="ngModel"
+                                    [class.is-invalid]="dateOfBirthInput.invalid && dateOfBirthInput.touched">
+                                <div class="invalid-feedback"
+                                    *ngIf="dateOfBirthInput.invalid && dateOfBirthInput.touched">
                                     Vui lòng chọn ngày sinh
                                 </div>
                             </div>
@@ -49,14 +47,15 @@
                             <!-- Giới tính -->
                             <div class="col-md-6">
                                 <label for="gender" class="form-label required">Giới Tính</label>
-                                <select class="form-select" id="gender" name="gender" [(ngModel)]="patient.gender"
-                                    #gender="ngModel" required [class.is-invalid]="gender.invalid && gender.touched">
+                                <select class="form-select" [(ngModel)]="gender" id="gender" name="gender" required
+                                    #genderInput="ngModel"
+                                    [class.is-invalid]="genderInput.invalid && genderInput.touched">
                                     <option value="">Chọn giới tính</option>
                                     <option value="MALE">Nam</option>
                                     <option value="FEMALE">Nữ</option>
                                     <option value="OTHER">Khác</option>
                                 </select>
-                                <div class="invalid-feedback" *ngIf="gender.invalid && gender.touched">
+                                <div class="invalid-feedback" *ngIf="genderInput.invalid && genderInput.touched">
                                     Vui lòng chọn giới tính
                                 </div>
                             </div>
@@ -64,12 +63,10 @@
                             <!-- Số điện thoại -->
                             <div class="col-md-6">
                                 <label for="phone_Number" class="form-label required">Số Điện Thoại</label>
-                                <input type="tel" class="form-control" id="phone_Number" name="phone_Number"
-                                    [(ngModel)]="patient.phone_Number"
-                                #phoneNumber="ngModel" required pattern="[0-9]{10,11}"
-                                [class.is-invalid]="phoneNumber.invalid && phoneNumber.touched"
-                                placeholder="0123456789">
-                                <div class="invalid-feedback" *ngIf="phoneNumber.invalid && phoneNumber.touched">
+                                <input type="tel" class="form-control" [(ngModel)]="phone_Number" id="phone_Number"
+                                    name="phone_Number" placeholder="0123456789" required pattern="[0-9]{10,11}"
+                                    #phoneInput="ngModel" [class.is-invalid]="phoneInput.invalid && phoneInput.touched">
+                                <div class="invalid-feedback" *ngIf="phoneInput.invalid && phoneInput.touched">
                                     Vui lòng nhập số điện thoại hợp lệ (10-11 số)
                                 </div>
                             </div>
@@ -77,11 +74,11 @@
                             <!-- Địa chỉ -->
                             <div class="col-12">
                                 <label for="address" class="form-label required">Địa Chỉ</label>
-                                <textarea class="form-control" id="address" name="address" [(ngModel)]="patient.address"
-                                    #address="ngModel" required rows="2"
-                                    [class.is-invalid]="address.invalid && address.touched"
-                                    placeholder="123 Đường ABC, Phường XYZ, Quận/Huyện, Tỉnh/Thành phố"></textarea>
-                                <div class="invalid-feedback" *ngIf="address.invalid && address.touched">
+                                <textarea class="form-control" [(ngModel)]="address" id="address" name="address"
+                                    placeholder="123 Đường ABC, Phường XYZ, Quận/Huyện, Tỉnh/Thành phố" required
+                                    #addressInput="ngModel"
+                                    [class.is-invalid]="addressInput.invalid && addressInput.touched"></textarea>
+                                <div class="invalid-feedback" *ngIf="addressInput.invalid && addressInput.touched">
                                     Vui lòng nhập địa chỉ
                                 </div>
                             </div>
@@ -98,13 +95,12 @@
                         <div class="row g-3 mb-4">
                             <!-- Số CCCD/CMND -->
                             <div class="col-md-6">
-                                <label for="id_Numberr" class="form-label required">Số CCCD/CMND</label>
-                                <input type="text" class="form-control" id="id_Number" name="id_Number"
-                                    [(ngModel)]="patient.id_Number"
-                                #id_Number="ngModel" required pattern="[0-9]{9,12}"
-                                [class.is-invalid]="id_Number.invalid && id_Number.touched"
-                                placeholder="123456789012">
-                                <div class="invalid-feedback" *ngIf="id_Number.invalid && id_Number.touched">
+                                <label for="id_Number" class="form-label required">Số CCCD/CMND</label>
+                                <input type="text" class="form-control" [(ngModel)]="id_Number" id="id_Number"
+                                    name="id_Number" placeholder="123456789012" required pattern="[0-9]{9,12}"
+                                    #idNumberInput="ngModel"
+                                    [class.is-invalid]="idNumberInput.invalid && idNumberInput.touched">
+                                <div class="invalid-feedback" *ngIf="idNumberInput.invalid && idNumberInput.touched">
                                     Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)
                                 </div>
                             </div>
@@ -112,11 +108,10 @@
                             <!-- Email -->
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                    [(ngModel)]="patient.email"
-                                #email="ngModel" email
-                                [class.is-invalid]="email.invalid && email.touched" placeholder="example@gmail.com">
-                                <div class="invalid-feedback" *ngIf="email.invalid && email.touched">
+                                <input type="email" class="form-control" [(ngModel)]="email" id="email" name="email"
+                                    placeholder="example@gmail.com" #emailInput="ngModel"
+                                    [class.is-invalid]="emailInput.invalid && emailInput.touched">
+                                <div class="invalid-feedback" *ngIf="emailInput.invalid && emailInput.touched">
                                     Vui lòng nhập email hợp lệ
                                 </div>
                             </div>
@@ -134,9 +129,7 @@
                             <!-- Nhóm máu -->
                             <div class="col-md-4">
                                 <label for="blood_type" class="form-label">Nhóm Máu</label>
-                                <select class="form-select" id="blood_type" name="blood_type"
-                                    [(ngModel)]="patient.blood_type"
-                                    >
+                                <select class="form-select" [(ngModel)]="blood_type" id="blood_type" name="blood_type">
                                     <option value="">Chọn nhóm máu</option>
                                     <option value="A+">A+</option>
                                     <option value="A-">A-</option>
@@ -153,9 +146,8 @@
                             <!-- Tình trạng hôn nhân -->
                             <div class="col-md-4">
                                 <label for="marital_status" class="form-label">Tình Trạng Hôn Nhân</label>
-                                <select class="form-select" id="marital_status" name="marital_status"
-                                    [(ngModel)]="patient.marital_status"
-                                    >
+                                <select class="form-select" [(ngModel)]="marital_status" id="marital_status"
+                                    name="marital_status">
                                     <option value="">Chọn tình trạng</option>
                                     <option value="SINGLE">Độc thân</option>
                                     <option value="MARRIED">Đã kết hôn</option>
@@ -169,16 +161,14 @@
                             <!-- Nghề nghiệp -->
                             <div class="col-md-4">
                                 <label for="occupation" class="form-label">Nghề Nghiệp</label>
-                                <input type="text" class="form-control" id="occupation" name="occupation"
-                                    [(ngModel)]="patient.occupation"
-                                placeholder="Bác sĩ, Kỹ sư, ...">
+                                <input type="text" class="form-control" [(ngModel)]="occupation" id="occupation"
+                                    name="occupation" placeholder="Bác sĩ, Kỹ sư, ...">
                             </div>
 
                             <!-- Dị ứng -->
                             <div class="col-12">
                                 <label for="allergies" class="form-label">Tiền Sử Dị Ứng</label>
-                                <textarea class="form-control" id="allergies" name="allergies"
-                                    [(ngModel)]="patient.allergies"
+                                <textarea class="form-control" [(ngModel)]="allergies" id="allergies" name="allergies"
                                     rows="2" placeholder="Dị ứng thuốc, thực phẩm, ... (nếu có)"></textarea>
                                 <small class="form-text text-muted">
                                     <i class="bi bi-info-circle me-1"></i>
@@ -192,19 +182,19 @@
                             <button type="button" class="btn btn-outline-secondary btn-lg" (click)="onCancel()"
                                 [disabled]="isLoading">
                                 <i class="bi bi-x-circle me-2"></i>
-                                Hủy
+                                Thoát
                             </button>
-                            <button type="button" class="btn btn-warning btn-lg" (click)="resetForm()"
+                            <button type="button" class="btn btn-warning btn-lg" (click)="onReset()"
                                 [disabled]="isLoading">
                                 <i class="bi bi-arrow-clockwise me-2"></i>
                                 Làm mới
                             </button>
                             <button type="submit" class="btn btn-primary btn-lg"
-                                [disabled]="patientForm.invalid || isLoading">
+                                [disabled]="isLoading || patientForm.invalid">
                                 <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true"></span>
-                                <i class="bi bi-check-circle me-2" *ngIf="!isLoading"></i>
-                                {{ isLoading ? 'Đang lưu...' : 'Lưu Bệnh Nhân' }}
+                                <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                                {{ isLoading ? 'Đang xử lý...' : 'Thêm bệnh nhân' }}
                             </button>
                         </div>
                     </form>
