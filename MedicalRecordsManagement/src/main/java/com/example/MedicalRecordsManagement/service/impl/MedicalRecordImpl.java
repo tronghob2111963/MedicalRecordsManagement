@@ -2,6 +2,7 @@ package com.example.MedicalRecordsManagement.service.impl;
 
 import com.example.MedicalRecordsManagement.common.MedicalRecordStatus;
 import com.example.MedicalRecordsManagement.dto.request.MedicalRecordRequestDTO;
+import com.example.MedicalRecordsManagement.dto.response.MedicalRecordDetailResponseDTO;
 import com.example.MedicalRecordsManagement.dto.response.MedicalRecordReponseDTO;
 import com.example.MedicalRecordsManagement.dto.response.PageResponse;
 import com.example.MedicalRecordsManagement.entity.Doctor;
@@ -20,9 +21,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,21 +42,15 @@ public class MedicalRecordImpl implements MedicalRecordService {
 
     //tao moi medical record
     @Override
-    public MedicalRecordReponseDTO createMedicalRecord(MedicalRecordRequestDTO request) {
-        log.info("Creating medical record for patient ID: {}", request.getPatient_id(),request.getDotor_id(), request.getNote());
+    public MedicalRecordDetailResponseDTO createMedicalRecord(MedicalRecordRequestDTO request) {
+        log.info("Creating medical record for patient ID: {}", request.getPatient_id(),request.getDoctor_id(), request.getNote());
         Long patientId = request.getPatient_id();
-        Long doctorId = request.getDotor_id();
+        Long doctorId = request.getDoctor_id();
+        String diagnosis = request.getDiagnosis();
+        String treatment = request.getTreatment();
         String note = request.getNote();
         String status = request.getStatus();
 
-       if(patientId == null){
-           log.error("Patient ID is null");
-           return null;
-       }
-       if(doctorId == null){
-           log.error("Doctor ID is null");
-           return null;
-       }
        //tim ID cua patient va doctor
        Patient patient = patientRepository.findById(patientId)
                .orElseThrow(() -> new IllegalArgumentException("Patient not found with ID: " + patientId));
@@ -65,17 +62,24 @@ public class MedicalRecordImpl implements MedicalRecordService {
         MedicalRecord medicalRecord = MedicalRecord.builder()
                         .patient_id(patient)
                         .doctor_id(doctor)
+                        .diagnosis(diagnosis)
+                        .treatment(treatment)
                         .status(MedicalRecordStatus.valueOf(status))
+                        .visit_date(LocalDate.parse(request.getVisit_date()))
                         .note(note)
                         .build();
         medicalRecordRepository.save(medicalRecord);
-        MedicalRecordReponseDTO response = MedicalRecordReponseDTO.builder()
+        MedicalRecordDetailResponseDTO response = MedicalRecordDetailResponseDTO.builder()
                 .id(medicalRecord.getId())
                 .patient_Name(medicalRecord.getPatient_id().getFull_Name())
-                .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
+                .dotor_Name(medicalRecord.getDoctor_id().getFull_name())
+                .diagnosis(medicalRecord.getDiagnosis())
+                .treatment(medicalRecord.getTreatment())
+                .visit_date(medicalRecord.getVisit_date().toString())
                 .Note(medicalRecord.getNote())
                 .status(medicalRecord.getStatus().toString())
                 .build();
+
         return response;
 
     }
@@ -205,13 +209,13 @@ public class MedicalRecordImpl implements MedicalRecordService {
             log.error("Medical record not found with ID: {}", id);
             throw new IllegalArgumentException("Medical record not found with ID: " + id);
         }
-        if(medicalRecordRequestDTO.getDotor_id() == null) {
+        if(medicalRecordRequestDTO.getDoctor_id() == null) {
             log.error("Doctor ID cannot be null");
             throw new IllegalArgumentException("Doctor ID cannot be null");
         }
 
-        Doctor doctor_id = doctorRepository.findById(medicalRecordRequestDTO.getDotor_id())
-                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with ID: " + medicalRecordRequestDTO.getDotor_id()));
+        Doctor doctor_id = doctorRepository.findById(medicalRecordRequestDTO.getDoctor_id())
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found with ID: " + medicalRecordRequestDTO.getDoctor_id()));
 
         Patient patient_id = patientRepository.findById(medicalRecordRequestDTO.getPatient_id())
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found with ID: " + medicalRecordRequestDTO.getPatient_id()));

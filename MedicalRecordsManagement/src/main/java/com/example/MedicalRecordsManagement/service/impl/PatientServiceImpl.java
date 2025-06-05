@@ -108,6 +108,7 @@ public class PatientServiceImpl implements PatientService {
         // Create a new patient
         Patient patient = Patient.builder()
                 .full_Name(patientDTO.getFull_Name())
+//                .Date_Of_Birth(LocalDate.parse(patientDTO.getDate_of_birth()))
                 .Date_Of_Birth(LocalDate.parse(patientDTO.getDate_of_birth()))
                 .gender(patientDTO.getGender())
                 .phone_Number(patientDTO.getPhone_Number())

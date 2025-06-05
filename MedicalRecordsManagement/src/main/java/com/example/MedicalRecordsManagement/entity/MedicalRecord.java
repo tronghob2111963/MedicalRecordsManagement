@@ -5,6 +5,7 @@ import com.example.MedicalRecordsManagement.common.MedicalRecordStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,7 +30,14 @@ public class MedicalRecord {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor_id;
 
+    @Column(length = 500)
+    private String diagnosis;
 
+    @Column(length = 500)
+    private String treatment;
+
+
+    private LocalDate visit_date;
 
     @Column(length = 500)
     private String note;
@@ -44,3 +52,7 @@ public class MedicalRecord {
 
 
 }
+
+//Diagnosis NVARCHAR(500),
+//Treatment NVARCHAR(500),
+//Visit_Date DATETIME NOT NULL,
