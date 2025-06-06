@@ -46,6 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             // Nếu xác thực thành công, lưu thông tin vào SecurityContext
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
         } catch (Exception e) {
             log.error("Error authenticating user: {}", e.getMessage());
             throw new AccessDeniedException("Invalid username or password");
@@ -58,9 +59,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(user.getId(), request.getUsername(), null);
         UserRole userRole = user.getRole();
 
+        log.info("Generated access token: {}", accessToken);
+
         return TokenResponse.builder()
                 .AccessToken(accessToken)
                 .RefreshToken(refreshToken)
+                .username(request.getUsername())
                 .role(userRole)
                 .build();
     }

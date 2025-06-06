@@ -31,7 +31,7 @@ export interface PatientListResponseDTO {
 export interface PatientDetailResponseDTO {
   full_Name: string;
   gender: string;
-  Date_Of_Birth: string;
+  date_Of_Birth: string;
   address: string;
   phone_Number: string;
   email: string;
@@ -111,7 +111,7 @@ export class PatientService {
   // Lấy thông tin chi tiết bệnh nhân theo ID
   getPatientById(id: number): Observable<ResponseData<PatientDetailResponseDTO>> {
     return this.http.get<ResponseData<PatientDetailResponseDTO>>(
-      `${this.apiUrl}/patient/${id}`,
+      `${this.apiUrl}/patient-detail/${id}`,
       this.apiConfig
     );
   }

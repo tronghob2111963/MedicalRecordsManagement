@@ -89,6 +89,11 @@ public class PatientServiceImpl implements PatientService {
                 .address(patient.getAddress())
                 .phone_Number(patient.getPhone_Number())
                 .email(patient.getEmail())
+                .id_number(patient.getId_number())
+                .blood_type(patient.getBlood_type())
+                .marital_status(patient.getMarital_status())
+                .occupation(patient.getOccupation())
+                .allergies(patient.getAllergies())
                 .build();
     }
 

@@ -32,7 +32,7 @@ public class AppConfig implements WebMvcConfigurer {
 
 
 
-    private String[] WHITELIST = {"/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/auth/**" ,"/patient/**","/user/**"};
+    private String[] WHITELIST = {"/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/auth/**","/user/**"};
     private final CustomizeRequestFilter customizeRequestFilter;
     private final UserServiceDetail userServiceDetail;
 

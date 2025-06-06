@@ -14,5 +14,6 @@ import java.io.Serializable;
 public class TokenResponse implements Serializable {
     private String AccessToken;
     private String RefreshToken;
+    private String username;
     private UserRole role;
 }

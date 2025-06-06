@@ -63,8 +63,4 @@ public class Patient {
 
 }
 
-//ALTER TABLE Patients
-//ADD COLUMN blood_type NVARCHAR(5),
-//ADD COLUMN marital_status NVARCHAR(20),
-//ADD COLUMN occupation NVARCHAR(100),
-//ADD COLUMN allergies NVARCHAR(500);
+

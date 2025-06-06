@@ -13,12 +13,10 @@ public class PatientDetailResponseDTO {
     private String address;
     private String phone_Number;
     private String email;
-    private String image;
     private String id_number;
     private String blood_type;
     private String marital_status;
     private String occupation;
     private String allergies;
-
 
 }

@@ -1,219 +1,153 @@
-<div class="container py-4">
-    <!-- Header với thông tin cơ bản -->
-    <div class="profile-header text-center">
-        <div class="avatar mx-auto">
-            <i class="bi bi-person-fill"></i>
-        </div>
-        <h2 class="mb-1">Nguyễn Văn An</h2>
-        <p class="mb-2">Mã BN: BN001</p>
-        <span class="status-badge status-active">
-            <i class="bi bi-check-circle me-1"></i>
-            Đang điều trị
-        </span>
+<!-- patient-detail.component.html -->
+<div class="patient-detail-container">
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Đang tải thông tin bệnh nhân...</p>
     </div>
 
-    <div class="row">
-        <!-- Thông tin cá nhân -->
-        <div class="col-lg-6 mb-4">
-            <div class="info-card p-4">
-                <h4 class="section-title">
-                    <i class="bi bi-person-badge me-2"></i>
-                    Thông tin cá nhân
-                </h4>
-
-                <div class="info-label">Họ và tên</div>
-                <div class="info-value">Nguyễn Văn An</div>
-
-                <div class="info-label">Ngày sinh</div>
-                <div class="info-value">15/08/1978 (45 tuổi)</div>
-
-                <div class="info-label">Giới tính</div>
-                <div class="info-value">Nam</div>
-
-                <div class="info-label">CMND/CCCD</div>
-                <div class="info-value">0123456789</div>
-
-                <div class="info-label">Nghề nghiệp</div>
-                <div class="info-value">Kỹ sư</div>
-
-                <div class="info-label">Tình trạng hôn nhân</div>
-                <div class="info-value">Đã kết hôn</div>
-            </div>
-        </div>
-
-        <!-- Thông tin liên hệ -->
-        <div class="col-lg-6 mb-4">
-            <div class="info-card p-4">
-                <h4 class="section-title">
-                    <i class="bi bi-telephone-fill me-2"></i>
-                    Thông tin liên hệ
-                </h4>
-
-                <div class="info-label">Số điện thoại</div>
-                <div class="info-value">
-                    <i class="bi bi-phone me-2"></i>
-                    0123456789
-                </div>
-
-                <div class="info-label">Email</div>
-                <div class="info-value">
-                    <i class="bi bi-envelope me-2"></i>
-                    <a href="mailto:lHw0s&#64;example.com">lHw0s&#64;example.com</a>
-                </div>
-
-                <div class="info-label">Địa chỉ</div>
-                <div class="info-value">
-                    <i class="bi bi-geo-alt me-2"></i>
-                    Số 123, Đường ABC, Phường XYZ, Quận 1, Hà Nội
-                </div>
-            </div>
-        </div>
-
-        <!-- Thông tin y tế -->
-        <div class="col-lg-6 mb-4">
-            <div class="info-card p-4">
-                <h4 class="section-title">
-                    <i class="bi bi-heart-pulse-fill me-2"></i>
-                    Thông tin y tế
-                </h4>
-
-                <div class="info-label">Nhóm máu</div>
-                <div class="info-value">
-                    <span class="badge bg-danger fs-6">A+</span>
-                </div>
-
-                <div class="info-label">Dị ứng</div>
-                <div class="info-value">
-                    <div class="emergency-info">
-                        <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
-                        <strong>Penicillin, Tôm cua, Phấn hoa</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Thống kê nhanh -->
-        <div class="col-lg-6 mb-4">
-            <div class="info-card p-4">
-                <h4 class="section-title">
-                    <i class="bi bi-graph-up me-2"></i>
-                    Thống kê
-                </h4>
-
-                <div class="row text-center">
-                    <div class="col-4">
-                        <div class="border-end">
-                            <h5 class="text-primary mb-0">12</h5>
-                            <small class="text-muted">Lần khám</small>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="border-end">
-                            <h5 class="text-success mb-0">3</h5>
-                            <small class="text-muted">Nhập viện</small>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <h5 class="text-info mb-0">8</h5>
-                        <small class="text-muted">Đơn thuốc</small>
-                    </div>
-                </div>
-            </div>
+    <!-- Error Message -->
+    <div *ngIf="error && !loading" class="error-container">
+        <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Có lỗi xảy ra</h3>
+            <p>{{ error }}</p>
+            <button class="btn btn-primary" (click)="loadPatientDetail()">
+                <i class="fas fa-redo"></i> Thử lại
+            </button>
         </div>
     </div>
 
-    <!-- Lịch sử khám gần đây -->
-    <div class="info-card p-4 mb-4">
-        <h4 class="section-title">
-            <i class="bi bi-clock-history me-2"></i>
-            Lịch sử khám gần đây
-        </h4>
+    <!-- Patient Details -->
+    <div *ngIf="patient && !loading && !error" class="patient-detail-content">
+        <!-- Header -->
+        <div class="detail-header">
+            <div class="header-left">
+                <h2>
+                    <i class="fas fa-user-md"></i>
+                    Thông tin bệnh nhân
+                </h2>
+                <p class="patient-name">{{ patient.full_Name }}</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" routerLink="/patient">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
+                <button class="btn btn-warning" (click)="onEdit()">
+                    <i class="fas fa-edit"></i> Chỉnh sửa
+                </button>
+                <button class="btn btn-danger" (click)="onDelete()">
+                    <i class="fas fa-trash"></i> Xóa
+                </button>
+            </div>
+        </div>
 
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <div class="border rounded p-3">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <strong>Khám tổng quát</strong>
-                        <small class="text-muted">25/05/2025</small>
+        <!-- Patient Information Cards -->
+        <div class="info-cards">
+            <!-- Personal Information -->
+            <div class="info-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user"></i> Thông tin cá nhân</h3>
+                </div>
+                <div class="card-content">
+                    <div class="info-row">
+                        <label>Họ và tên:</label>
+                        <span>{{ patient.full_Name }}</span>
                     </div>
-                    <p class="text-muted mb-1">BS. Nguyễn Thị Hoa</p>
-                    <p class="mb-0">Khoa Nội tổng hợp</p>
+                    <div class="info-row">
+                        <label>Giới tính:</label>
+                        <span class="gender-badge" [class.male]="patient.gender === 'Nam'"
+                            [class.female]="patient.gender === 'Nữ'">
+                            <i class="fas" [class.fa-mars]="patient.gender === 'Nam'"
+                                [class.fa-venus]="patient.gender === 'Nữ'"></i>
+                            {{ patient.gender }}
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <label>Ngày sinh:</label>
+                        <span>{{ formatDate(patient.date_Of_Birth) }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="calculateAge(patient.date_Of_Birth)">
+                        <label>Tuổi:</label>
+                        <span>{{ calculateAge(patient.date_Of_Birth) }} tuổi</span>
+                    </div>
+                    <div class="info-row" *ngIf="patient.id_number">
+                        <label>CMND/CCCD:</label>
+                        <span>{{ patient.id_number }}</span>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="border rounded p-3">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <strong>Tái khám</strong>
-                        <small class="text-muted">20/05/2025</small>
+
+            <!-- Contact Information -->
+            <div class="info-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-address-book"></i> Thông tin liên hệ</h3>
+                </div>
+                <div class="card-content">
+                    <div class="info-row">
+                        <label>Số điện thoại:</label>
+                        <span class="phone-number">
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:{{ patient.phone_Number }}">{{ patient.phone_Number }}</a>
+                        </span>
                     </div>
-                    <p class="text-muted mb-1">BS. Trần Văn Nam</p>
-                    <p class="mb-0">Khoa Tim mạch</p>
+                    <div class="info-row">
+                        <label>Email:</label>
+                        <span class="email">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:{{ patient.email }}">{{ patient.email }}</a>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <label>Địa chỉ:</label>
+                        <span class="address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ patient.address }}
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="border rounded p-3">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <strong>Xét nghiệm</strong>
-                        <small class="text-muted">18/05/2025</small>
+
+            <!-- Medical Information -->
+            <div class="info-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-heartbeat"></i> Thông tin y tế</h3>
+                </div>
+                <div class="card-content">
+                    <div class="info-row" *ngIf="patient.blood_type">
+                        <label>Nhóm máu:</label>
+                        <span class="blood-type">
+                            <i class="fas fa-tint"></i>
+                            {{ patient.blood_type }}
+                        </span>
                     </div>
-                    <p class="text-muted mb-1">Phòng XN</p>
-                    <p class="mb-0">Xét nghiệm máu</p>
+                    <div class="info-row" *ngIf="patient.allergies">
+                        <label>Dị ứng:</label>
+                        <span class="allergies" [class.no-allergy]="patient.allergies === 'Không có'">
+                            <i class="fas fa-exclamation-triangle" *ngIf="patient.allergies !== 'Không có'"></i>
+                            <i class="fas fa-check-circle" *ngIf="patient.allergies === 'Không có'"></i>
+                            {{ patient.allergies }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="info-card" *ngIf="patient.marital_status || patient.occupation">
+                <div class="card-header">
+                    <h3><i class="fas fa-info-circle"></i> Thông tin bổ sung</h3>
+                </div>
+                <div class="card-content">
+                    <div class="info-row" *ngIf="patient.marital_status">
+                        <label>Tình trạng hôn nhân:</label>
+                        <span>{{ patient.marital_status }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="patient.occupation">
+                        <label>Nghề nghiệp:</label>
+                        <span>{{ patient.occupation }}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Nút thao tác -->
-    <div class="action-buttons">
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary flex-fill" onclick="goBack()">
-                <i class="bi bi-arrow-left me-1"></i>
-                Quay lại
-            </button>
-            <button class="btn btn-outline-primary flex-fill" onclick="viewProfile()">
-                <i class="bi bi-eye me-1"></i>
-                Xem chi tiết
-            </button>
-            <button class="btn btn-outline-warning flex-fill" onclick="editPatient()">
-                <i class="bi bi-pencil me-1"></i>
-                Sửa thông tin
-            </button>
-            <button class="btn btn-primary flex-fill" onclick="viewMedicalRecord()">
-                <i class="bi bi-file-medical me-1"></i>
-                Xem hồ sơ bệnh án
-            </button>
-        </div>
     </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script>
-    function goBack() {
-        alert('Quay lại danh sách bệnh nhân');
-        // window.history.back();
-    }
-
-    function viewProfile() {
-        alert('Mở chi tiết thông tin bệnh nhân');
-    }
-
-    function editPatient() {
-        alert('Chuyển đến trang chỉnh sửa thông tin bệnh nhân');
-    }
-
-    function viewMedicalRecord() {
-        alert('Mở hồ sơ bệnh án của bệnh nhân');
-        // Có thể chuyển đến trang hồ sơ bệnh án
-    }
-
-    // Thêm hiệu ứng hover cho các card
-    document.querySelectorAll('.info-card').forEach(card => {
-        card.addEventListener('mouseenter', function () {
-            this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-        });
-
-        card.addEventListener('mouseleave', function () {
-            this.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-        });
-    });
-</script>

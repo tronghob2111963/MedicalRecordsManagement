@@ -24,7 +24,7 @@ public class PatientController {
 
     @GetMapping("/all-patients")
     @Operation(summary = "Get all patients")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> getAllPatients(@RequestParam(defaultValue = "1") int pageNo,
                                           @RequestParam(defaultValue = "10") int pageSize,
                                           @RequestParam(defaultValue = "ID:asc") String sortBy) {
@@ -38,9 +38,9 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/patient/{id}")
+    @GetMapping("/patient-detail/{id}")
     @Operation(summary = "Get patient by ID")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> getPatientById(@PathVariable Long id) {
         log.info("Fetching patient with ID: {}", id);
         try {
@@ -54,7 +54,7 @@ public class PatientController {
 
     @PostMapping("/create-patient")
     @Operation(summary = "Create a new patient")
-
+   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> createPatient(@RequestBody PatientRequestDTO patientDTO) {
         log.info("Creating new patient: {}", patientDTO);
         try {
