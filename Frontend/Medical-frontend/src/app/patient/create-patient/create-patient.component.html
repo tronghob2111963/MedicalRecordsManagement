@@ -11,6 +11,25 @@
                 </div>
 
                 <div class="card-body">
+                    <!-- Progress indicator -->
+                    <div class="progress mb-3" style="height: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                            [style.width.%]="getFormCompletionPercentage()"
+                            [attr.aria-valuenow]="getFormCompletionPercentage()" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                    <small class="text-muted mb-3 d-block">
+                        Hoàn thành: {{ getFormCompletionPercentage() }}%
+                    </small>
+
+                    <!-- Error display -->
+                    <div *ngIf="formErrors.length > 0" class="alert alert-danger alert-dismissible">
+                        <h6><i class="bi bi-exclamation-triangle me-2"></i>Vui lòng kiểm tra lại thông tin:</h6>
+                        <ul class="mb-0">
+                            <li *ngFor="let error of formErrors">{{ error }}</li>
+                        </ul>
+                    </div>
+
                     <form #patientForm="ngForm" novalidate (ngSubmit)="onSubmit()">
                         <!-- Thông tin cá nhân -->
                         <div class="section-header">
@@ -65,7 +84,8 @@
                                 <label for="phone_Number" class="form-label required">Số Điện Thoại</label>
                                 <input type="tel" class="form-control" [(ngModel)]="phone_Number" id="phone_Number"
                                     name="phone_Number" placeholder="0123456789" required pattern="[0-9]{10,11}"
-                                    #phoneInput="ngModel" [class.is-invalid]="phoneInput.invalid && phoneInput.touched">
+                                    (input)="formatPhoneNumber()" #phoneInput="ngModel"
+                                    [class.is-invalid]="phoneInput.invalid && phoneInput.touched">
                                 <div class="invalid-feedback" *ngIf="phoneInput.invalid && phoneInput.touched">
                                     Vui lòng nhập số điện thoại hợp lệ (10-11 số)
                                 </div>
@@ -76,7 +96,7 @@
                                 <label for="address" class="form-label required">Địa Chỉ</label>
                                 <textarea class="form-control" [(ngModel)]="address" id="address" name="address"
                                     placeholder="123 Đường ABC, Phường XYZ, Quận/Huyện, Tỉnh/Thành phố" required
-                                    #addressInput="ngModel"
+                                    rows="2" #addressInput="ngModel"
                                     [class.is-invalid]="addressInput.invalid && addressInput.touched"></textarea>
                                 <div class="invalid-feedback" *ngIf="addressInput.invalid && addressInput.touched">
                                     Vui lòng nhập địa chỉ
@@ -98,7 +118,7 @@
                                 <label for="id_Number" class="form-label required">Số CCCD/CMND</label>
                                 <input type="text" class="form-control" [(ngModel)]="id_Number" id="id_Number"
                                     name="id_Number" placeholder="123456789012" required pattern="[0-9]{9,12}"
-                                    #idNumberInput="ngModel"
+                                    (input)="formatIdNumber()" #idNumberInput="ngModel"
                                     [class.is-invalid]="idNumberInput.invalid && idNumberInput.touched">
                                 <div class="invalid-feedback" *ngIf="idNumberInput.invalid && idNumberInput.touched">
                                     Vui lòng nhập số CCCD/CMND hợp lệ (9-12 số)
@@ -151,10 +171,6 @@
                                     <option value="">Chọn tình trạng</option>
                                     <option value="SINGLE">Độc thân</option>
                                     <option value="MARRIED">Đã kết hôn</option>
-                                    <option value="DIVORCED">Đã ly hôn</option>
-                                    <option value="WIDOWED">Góa</option>
-                                    <option value="SEPARATED">Ly thân</option>
-                                    <option value="UNKNOWN">Không rõ</option>
                                 </select>
                             </div>
 
@@ -189,8 +205,7 @@
                                 <i class="bi bi-arrow-clockwise me-2"></i>
                                 Làm mới
                             </button>
-                            <button type="submit" class="btn btn-primary btn-lg"
-                                [disabled]="isLoading || patientForm.invalid">
+                            <button type="submit" class="btn btn-primary btn-lg" [disabled]="isLoading">
                                 <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true"></span>
                                 <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>

@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { PatientService, PatientRequestDTO } from '../../services/patient.service'; // Đường dẫn phù hợp với cấu trúc project
+import { PatientService, PatientRequestDTO } from '../../services/patient.service';
 
 @Component({
   selector: 'app-create-patient',
@@ -57,34 +57,73 @@ export class CreatePatientComponent {
 
   // Get current form data as PatientRequestDTO
   private getCurrentFormData(): PatientRequestDTO {
-    return this.patientService.createPatientDTO({
-      full_Name: this.full_Name,
+    return {
+      full_Name: this.full_Name.trim(),
       date_of_birth: this.date_of_birth,
       gender: this.gender,
-      phone_Number: this.phone_Number,
-      address: this.address,
-      id_Number: this.id_Number,
-      email: this.email,
-      blood_type: this.blood_type,
-      marital_status: this.marital_status,
-      occupation: this.occupation,
-      allergies: this.allergies
-    });
+      phone_Number: this.phone_Number.trim(),
+      address: this.address.trim(),
+      id_Number: this.id_Number.trim(),
+      email: this.email.trim(),
+      blood_type: this.blood_type || undefined,
+      marital_status: this.marital_status || undefined,
+      occupation: this.occupation.trim() || undefined,
+      allergies: this.allergies.trim() || undefined
+    };
   }
 
-  // Validate form using service
+  // Validate form
   private validateForm(): boolean {
+    this.formErrors = [];
+
     const patientData = this.getCurrentFormData();
-    const validation = this.patientService.validatePatientData(patientData);
 
-    this.formErrors = validation.errors;
-
-    if (!validation.isValid) {
-      this.showError(validation.errors.join(', '));
-      return false;
+    // Validate required fields
+    if (!patientData.full_Name) {
+      this.formErrors.push('Họ và tên là bắt buộc');
     }
 
-    return true;
+    if (!patientData.date_of_birth) {
+      this.formErrors.push('Ngày sinh là bắt buộc');
+    } else {
+      // Validate date format and age
+      const birthDate = new Date(patientData.date_of_birth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      
+      if (birthDate > today) {
+        this.formErrors.push('Ngày sinh không thể lớn hơn ngày hiện tại');
+      } else if (age > 150) {
+        this.formErrors.push('Tuổi không hợp lệ');
+      }
+    }
+
+    if (!patientData.gender) {
+      this.formErrors.push('Giới tính là bắt buộc');
+    }
+
+    if (!patientData.phone_Number) {
+      this.formErrors.push('Số điện thoại là bắt buộc');
+    } else if (!/^[0-9]{10,11}$/.test(patientData.phone_Number)) {
+      this.formErrors.push('Số điện thoại phải có 10-11 chữ số');
+    }
+
+    if (!patientData.address) {
+      this.formErrors.push('Địa chỉ là bắt buộc');
+    }
+
+    if (!patientData.id_Number) {
+      this.formErrors.push('Số CCCD/CMND là bắt buộc');
+    } else if (!/^[0-9]{9,12}$/.test(patientData.id_Number)) {
+      this.formErrors.push('Số CCCD/CMND phải có 9-12 chữ số');
+    }
+
+    // Validate email if provided
+    if (patientData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(patientData.email)) {
+      this.formErrors.push('Email không hợp lệ');
+    }
+
+    return this.formErrors.length === 0;
   }
 
   // Submit form
@@ -94,6 +133,7 @@ export class CreatePatientComponent {
 
     // Validate form
     if (!this.validateForm()) {
+      this.showError(this.formErrors.join('. '));
       return;
     }
 
@@ -111,12 +151,14 @@ export class CreatePatientComponent {
         this.isLoading = false;
         console.log('Response received:', response);
 
-        if (response.code === 200) {
+        if (response.status === 200) {
           this.showSuccess('Thêm bệnh nhân thành công!');
           this.resetForm();
 
-          // Có thể redirect đến trang danh sách bệnh nhân
-          // this.router.navigate(['/patients']);
+          // Navigate to patient list
+          setTimeout(() => {
+            this.router.navigate(['/patients']);
+          }, 1000);
         } else {
           this.showError(response.message || 'Có lỗi xảy ra');
         }
@@ -125,8 +167,20 @@ export class CreatePatientComponent {
         this.isLoading = false;
         console.error('Error creating patient:', error);
 
-        // Use service's error handler
-        const errorMessage = this.patientService.handleError(error);
+        let errorMessage = 'Có lỗi xảy ra khi thêm bệnh nhân';
+        
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (error.status === 400) {
+          errorMessage = 'Dữ liệu không hợp lệ';
+        } else if (error.status === 401) {
+          errorMessage = 'Bạn không có quyền thực hiện thao tác này';
+        } else if (error.status === 500) {
+          errorMessage = 'Lỗi máy chủ nội bộ';
+        }
+
         this.showError(errorMessage);
       }
     });
@@ -148,7 +202,7 @@ export class CreatePatientComponent {
     }
 
     this.resetForm();
-    this.router.navigate(['/patient']);
+    this.router.navigate(['/patients']);
   }
 
   // Check if form has unsaved changes
@@ -210,12 +264,9 @@ export class CreatePatientComponent {
     alert(message); // TODO: Thay thế bằng toast notification service
   }
 
-  // Additional utility methods for template
-
   // Check if form is valid (for enabling/disabling submit button)
   isFormValid(): boolean {
-    const patientData = this.getCurrentFormData();
-    return this.patientService.validatePatientData(patientData).isValid;
+    return this.validateForm();
   }
 
   // Get form completion percentage
@@ -243,7 +294,7 @@ export class CreatePatientComponent {
     return Math.round(((completedRequired + completedOptional * 0.5) / (requiredFields.length + optionalFields.length * 0.5)) * 100);
   }
 
-  // Phone number formatting (optional)
+  // Phone number formatting
   formatPhoneNumber(): void {
     // Remove all non-digits
     let cleaned = this.phone_Number.replace(/\D/g, '');
@@ -256,7 +307,7 @@ export class CreatePatientComponent {
     this.phone_Number = cleaned;
   }
 
-  // ID number formatting (optional)
+  // ID number formatting
   formatIdNumber(): void {
     // Remove all non-digits
     let cleaned = this.id_Number.replace(/\D/g, '');
@@ -269,230 +320,3 @@ export class CreatePatientComponent {
     this.id_Number = cleaned;
   }
 }
-// import { Component, OnInit, inject } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
-// import { CommonModule } from '@angular/common';
-// import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-// import { Router } from '@angular/router';
-
-// interface PatientRequestDTO {
-//   full_Name: string;
-//   date_of_birth: string;
-//   gender: string;
-//   phone_Number: string;
-//   address: string;
-//   id_Number: string;
-//   email: string;
-//   blood_type: string;
-//   marital_status: string;
-//   occupation: string;
-//   allergies: string;
-// }
-
-
-// interface ResponseData<T> {
-//   code: number;
-//   message: string;
-//   data: T;
-// }
-
-// @Component({
-//   selector: 'app-create-patient',
-//   standalone: true,
-//   imports: [FormsModule, CommonModule],
-//   templateUrl: './create-patient.component.html',
-//   styleUrl: './create-patient.component.css'
-// })
-// export class CreatePatientComponent {
-//   // Khai báo các biến
-//   full_Name: string = '';
-//   date_of_birth: string = '';
-//   gender: string = '';
-//   phone_Number: string = '';
-//   address: string = '';
-//   id_Number: string = '';
-//   email: string = '';
-//   blood_type: string = '';
-//   marital_status: string = '';
-//   occupation: string = '';
-//   allergies: string = '';
-
-//   // Loading state
-//   isLoading: boolean = false;
-
-//   // Inject dependencies
-//   private http = inject(HttpClient);
-//   private router = inject(Router);
-
-//   // API endpoint
-//   private apiUrl = 'http://localhost:8080/patient'; // Thay đổi URL theo cấu hình backend của bạn
-
-//   constructor() {
-//     this.resetForm();
-//   }
-
-//   // Reset form
-//   resetForm(): void {
-//     this.full_Name = '';
-//     this.date_of_birth = '';
-//     this.gender = '';
-//     this.phone_Number = '';
-//     this.address = '';
-//     this.id_Number = '';
-//     this.email = '';
-//     this.blood_type = '';
-//     this.marital_status = '';
-//     this.occupation = '';
-//     this.allergies = '';
-//   }
-
-//   // Validate form inputs
-//   validateForm(): boolean {
-//     // Validate required fields
-//     if (!this.full_Name.trim()) {
-//       this.showError('Vui lòng nhập họ và tên');
-//       return false;
-//     }
-
-//     if (!this.date_of_birth) {
-//       this.showError('Vui lòng chọn ngày sinh');
-//       return false;
-//     }
-
-//     if (!this.gender) {
-//       this.showError('Vui lòng chọn giới tính');
-//       return false;
-//     }
-
-//     if (!this.phone_Number.trim()) {
-//       this.showError('Vui lòng nhập số điện thoại');
-//       return false;
-//     }
-
-//     if (!this.address.trim()) {
-//       this.showError('Vui lòng nhập địa chỉ');
-//       return false;
-//     }
-
-//     if (!this.id_Number.trim()) {
-//       this.showError('Vui lòng nhập số CCCD/CMND');
-//       return false;
-//     }
-
-//     // Validate phone number format
-//     const phoneRegex = /^[0-9]{10,11}$/;
-//     if (!phoneRegex.test(this.phone_Number)) {
-//       this.showError('Số điện thoại phải có 10-11 chữ số');
-//       return false;
-//     }
-
-//     // Validate ID number format
-//     const idRegex = /^[0-9]{9,12}$/;
-//     if (!idRegex.test(this.id_Number)) {
-//       this.showError('Số CCCD/CMND phải có 9-12 chữ số');
-//       return false;
-//     }
-
-//     // Validate email format if provided
-//     if (this.email && this.email.trim()) {
-//       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//       if (!emailRegex.test(this.email)) {
-//         this.showError('Email không hợp lệ');
-//         return false;
-//       }
-//     }
-
-//     return true;
-//   }
-
-//   // Create patient DTO
-//   private createPatientDTO(): PatientRequestDTO {
-//     return {
-//       full_Name: this.full_Name.trim(),
-//       date_of_birth: this.date_of_birth,
-//       gender: this.gender,
-//       phone_Number: this.phone_Number.trim(),
-//       address: this.address.trim(),
-//       id_Number: this.id_Number.trim(),
-//       email: this.email.trim(),
-//       blood_type: this.blood_type || '',
-//       marital_status: this.marital_status || '',
-//       occupation: this.occupation.trim(),
-//       allergies: this.allergies.trim()
-//     };
-//   }
-
-//   // Submit form
-//   onSubmit(): void {
-//     if (!this.validateForm()) {
-//       return;
-//     }
-
-//     this.isLoading = true;
-
-//     const patientData = this.createPatientDTO();
-
-//     console.log('Sending patient data:', patientData);
-
-//     const headers = new HttpHeaders({
-//       'Content-Type': 'application/json'
-//     });
-
-//     this.http.post<ResponseData<any>>(`${this.apiUrl}/create-patient`, patientData, { headers })
-//       .subscribe({
-//         next: (response) => {
-//           this.isLoading = false;
-//           console.log('Response received:', response);
-//           if (response.code === 200) {
-//             this.showSuccess('Thêm bệnh nhân thành công!');
-//             this.resetForm();
-//             // Có thể redirect đến trang danh sách bệnh nhân
-//             // this.router.navigate(['/patients']);
-//           } else {
-//             this.showError(response.message || 'Có lỗi xảy ra');
-//           }
-//         },
-//         error: (error: HttpErrorResponse) => {
-//           this.isLoading = false;
-//           console.error('Error creating patient:', error);
-//           console.error('Error response:', error.error);
-
-//           if (error.status === 0) {
-//             this.showError('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.');
-//           } else if (error.status === 400) {
-//             this.showError('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin.');
-//           } else if (error.status === 500) {
-//             this.showError('Lỗi server. Vui lòng thử lại sau.');
-//           } else {
-//             this.showError(`Có lỗi xảy ra: ${error.message}`);
-//           }
-//         }
-//       });
-//   }
-
-//   // Reset form handler
-//   onReset(): void {
-//     this.resetForm();
-//     this.showInfo('Đã làm mới form');
-//   }
-
-//   // Cancel handler
-//   onCancel(): void {
-//     this.resetForm();
-//     // Có thể redirect về trang trước
-//     this.router.navigate(['/patient']);
-//   }
-
-//   // Utility methods for showing messages
-//   private showSuccess(message: string): void {
-//     alert(message); // Thay thế bằng toast notification service
-//   }
-
-//   private showError(message: string): void {
-//     alert(message); // Thay thế bằng toast notification service
-//   }
-
-//   private showInfo(message: string): void {
-//     alert(message); // Thay thế bằng toast notification service
-//   }
-// }

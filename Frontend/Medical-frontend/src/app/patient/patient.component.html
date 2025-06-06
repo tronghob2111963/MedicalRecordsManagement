@@ -1,41 +1,24 @@
-<div class="search-container">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-search"></i>
-                                    </span>
-                                    <input type="text" class="form-control" placeholder="Tìm kiếm theo tên, mã BN...">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-select">
-                                    <option value="">Tất cả trạng thái</option>
-                                    <option value="active">Đang điều trị</option>
-                                    <option value="recovered">Đã khỏi</option>
-                                    <option value="critical">Nguy kịch</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-primary w-100">
-                                    <i class="bi bi-funnel"></i> Lọc
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<app-home-header></app-home-header>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tải...</span>
     </div>
+    <p class="mt-2">Đang tải danh sách bệnh nhân...</p>
+</div>
+
+<!-- Error Message -->
+<div *ngIf="errorMessage && !isLoading" class="alert alert-danger mx-3" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="refreshPatients()">
+        <i class="bi bi-arrow-clockwise"></i> Thử lại
+    </button>
 </div>
 
 <!-- Main Content -->
-<div class="container">
+<div class="container" *ngIf="!isLoading">
     <!-- Stats Row -->
     <div class="row mb-4">
         <div class="col-md-3">
@@ -43,7 +26,7 @@
                 <div class="card-body">
                     <i class="bi bi-people-fill text-primary fs-1"></i>
                     <h5 class="mt-2">Tổng BN</h5>
-                    <h3 class="text-primary">248</h3>
+                    <h3 class="text-primary">{{ totalElements }}</h3>
                 </div>
             </div>
         </div>
@@ -58,28 +41,28 @@
             <a routerLink="/create-patient">
                 <button class="btn btn-success btn-action me-2">
                     <i class="bi bi-plus-circle"></i> Thêm BN mới
-                    </button>
+                </button>
             </a>
-            <button class="btn btn-outline-primary btn-action">
-                <i class="bi bi-download"></i> Xuất Excel
+            <button class="btn btn-outline-primary btn-action" (click)="refreshPatients()">
+                <i class="bi bi-arrow-clockwise"></i> Làm mới
             </button>
         </div>
     </div>
 
     <!-- Patient List -->
-    <div class="row">
-        <!-- Bệnh nhân 1 -->
-        <div class="col-md-6 col-lg-4 mb-4">
+    <div class="row" *ngIf="patients.length > 0">
+        <div class="col-md-6 col-lg-4 mb-4" *ngFor="let patient of patients; let i = index">
             <div class="card patient-card h-100 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
                         <div class="patient-avatar me-3">
-                            NVA
+                            {{ getInitials(patient.full_Name) }}
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="card-title mb-1">Nguyễn Văn An</h6>
+                            <h6 class="card-title mb-1">{{ patient.full_Name }}</h6>
                             <small class="text-muted">
-                                <i class="bi bi-credit-card-2-front"></i> BN001
+                                <i class="bi bi-credit-card-2-front"></i> BN{{ ('' + (i + 1 + (currentPage - 1) *
+                                pageSize)).padStart(3, '0') }}
                             </small>
                         </div>
                         <span class="badge bg-success status-badge">
@@ -90,329 +73,41 @@
                     <div class="row text-sm mb-3">
                         <div class="col-6">
                             <small class="text-muted">
-                                <i class="bi bi-calendar3"></i> 45 tuổi
+                                <i class="bi bi-calendar3"></i> {{ calculateAge(patient.date_Of_Birth) }} tuổi
                             </small>
                         </div>
                         <div class="col-6">
                             <small class="text-muted">
-                                <i class="bi bi-gender-male"></i> Nam
+                                <i class="bi" [class.bi-gender-male]="patient.gender === 'Male'"
+                                    [class.bi-gender-female]="patient.gender === 'Female'"></i>
+                                {{ patient.gender === 'Male' ? 'Nam' : 'Nữ' }}
                             </small>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <small class="text-muted d-block">
-                            <i class="bi bi-telephone"></i> 0123456789
+                            <i class="bi bi-telephone"></i> {{ patient.phone_Number }}
                         </small>
                         <small class="text-muted d-block">
-                            <i class="bi bi-geo-alt"></i> Hà Nội
+                            <i class="bi bi-geo-alt"></i> {{ patient.address }}
                         </small>
                         <small class="text-muted d-block">
-                            <i class="bi bi-clipboard-pulse"></i> Cao huyết áp
+                            <i class="bi bi-calendar"></i> {{ formatDate(patient.date_Of_Birth) }}
                         </small>
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary flex-fill" routerLink="/patient-detail">
+                        <button class="btn btn-sm btn-outline-primary flex-fill"
+                            [routerLink]="['/patient-detail', i + 1 + (currentPage - 1) * pageSize]">
                             <i class="bi bi-eye"></i> Xem
                         </button>
-                        <button class="btn btn-sm btn-outline-warning flex-fill">
+                        <button class="btn btn-sm btn-outline-warning flex-fill"
+                            [routerLink]="['/edit-patient', i + 1 + (currentPage - 1) * pageSize]">
                             <i class="bi bi-pencil"></i> Sửa
                         </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill">
-                            <i class="bi bi-trash"></i> Xóa
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bệnh nhân 2 -->
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card patient-card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="patient-avatar me-3">
-                            TTB
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="card-title mb-1">Trần Thị Bình</h6>
-                            <small class="text-muted">
-                                <i class="bi bi-credit-card-2-front"></i> BN002
-                            </small>
-                        </div>
-                        <span class="badge bg-info status-badge">
-                            <i class="bi bi-check-circle"></i> Đã khỏi
-                        </span>
-                    </div>
-
-                    <div class="row text-sm mb-3">
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3"></i> 32 tuổi
-                            </small>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-gender-female"></i> Nữ
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <small class="text-muted d-block">
-                            <i class="bi bi-telephone"></i> 0987654321
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-geo-alt"></i> TP.HCM
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-clipboard-pulse"></i> Viêm phổi
-                        </small>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary flex-fill">
-                            <i class="bi bi-eye"></i> Xem
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning flex-fill">
-                            <i class="bi bi-pencil"></i> Sửa
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill">
-                            <i class="bi bi-trash"></i> Xóa
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bệnh nhân 3 -->
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card patient-card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="patient-avatar me-3">
-                            PMC
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="card-title mb-1">Phạm Minh Cường</h6>
-                            <small class="text-muted">
-                                <i class="bi bi-credit-card-2-front"></i> BN003
-                            </small>
-                        </div>
-                        <span class="badge bg-success status-badge">
-                            <i class="bi bi-heart-pulse"></i> Đang điều trị
-                        </span>
-                    </div>
-
-                    <div class="row text-sm mb-3">
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3"></i> 28 tuổi
-                            </small>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-gender-male"></i> Nam
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <small class="text-muted d-block">
-                            <i class="bi bi-telephone"></i> 0369852147
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-geo-alt"></i> Đà Nẵng
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-clipboard-pulse"></i> Gãy xương tay
-                        </small>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary flex-fill">
-                            <i class="bi bi-eye"></i> Xem
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning flex-fill">
-                            <i class="bi bi-pencil"></i> Sửa
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill">
-                            <i class="bi bi-trash"></i> Xóa
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bệnh nhân 4 -->
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card patient-card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="patient-avatar me-3">
-                            LTD
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="card-title mb-1">Lê Thị Dung</h6>
-                            <small class="text-muted">
-                                <i class="bi bi-credit-card-2-front"></i> BN004
-                            </small>
-                        </div>
-                        <span class="badge bg-danger status-badge">
-                            <i class="bi bi-exclamation-triangle"></i> Nguy kịch
-                        </span>
-                    </div>
-
-                    <div class="row text-sm mb-3">
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3"></i> 67 tuổi
-                            </small>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-gender-female"></i> Nữ
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <small class="text-muted d-block">
-                            <i class="bi bi-telephone"></i> 0147258369
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-geo-alt"></i> Cần Thơ
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-clipboard-pulse"></i> Đái tháo đường
-                        </small>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary flex-fill">
-                            <i class="bi bi-eye"></i> Xem
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning flex-fill">
-                            <i class="bi bi-pencil"></i> Sửa
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill">
-                            <i class="bi bi-trash"></i> Xóa
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bệnh nhân 5 -->
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card patient-card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="patient-avatar me-3">
-                            HVE
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="card-title mb-1">Hoàng Văn Em</h6>
-                            <small class="text-muted">
-                                <i class="bi bi-credit-card-2-front"></i> BN005
-                            </small>
-                        </div>
-                        <span class="badge bg-success status-badge">
-                            <i class="bi bi-heart-pulse"></i> Đang điều trị
-                        </span>
-                    </div>
-
-                    <div class="row text-sm mb-3">
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3"></i> 54 tuổi
-                            </small>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-gender-male"></i> Nam
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <small class="text-muted d-block">
-                            <i class="bi bi-telephone"></i> 0258147963
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-geo-alt"></i> Hải Phòng
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-clipboard-pulse"></i> Viêm gan B
-                        </small>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary flex-fill">
-                            <i class="bi bi-eye"></i> Xem
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning flex-fill">
-                            <i class="bi bi-pencil"></i> Sửa
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill">
-                            <i class="bi bi-trash"></i> Xóa
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bệnh nhân 6 -->
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card patient-card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="patient-avatar me-3">
-                            ĐTP
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="card-title mb-1">Đỗ Thị Phương</h6>
-                            <small class="text-muted">
-                                <i class="bi bi-credit-card-2-front"></i> BN006
-                            </small>
-                        </div>
-                        <span class="badge bg-info status-badge">
-                            <i class="bi bi-check-circle"></i> Đã khỏi
-                        </span>
-                    </div>
-
-                    <div class="row text-sm mb-3">
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3"></i> 39 tuổi
-                            </small>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted">
-                                <i class="bi bi-gender-female"></i> Nữ
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <small class="text-muted d-block">
-                            <i class="bi bi-telephone"></i> 0741852963
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-geo-alt"></i> Huế
-                        </small>
-                        <small class="text-muted d-block">
-                            <i class="bi bi-clipboard-pulse"></i> Rối loạn tim mạch
-                        </small>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary flex-fill">
-                            <i class="bi bi-eye"></i> Xem
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning flex-fill">
-                            <i class="bi bi-pencil"></i> Sửa
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill">
+                        <button class="btn btn-sm btn-outline-danger flex-fill"
+                            (click)="deletePatient(i + 1 + (currentPage - 1) * pageSize)">
                             <i class="bi bi-trash"></i> Xóa
                         </button>
                     </div>
@@ -421,24 +116,42 @@
         </div>
     </div>
 
+    <!-- No Data Message -->
+    <div *ngIf="patients.length === 0 && !isLoading" class="text-center py-5">
+        <i class="bi bi-inbox display-1 text-muted"></i>
+        <h4 class="mt-3 text-muted">Không có bệnh nhân nào</h4>
+        <p class="text-muted">Hãy thêm bệnh nhân mới để bắt đầu quản lý.</p>
+        <a routerLink="/create-patient" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm BN mới
+        </a>
+    </div>
+
     <!-- Pagination -->
-    <nav aria-label="Patient pagination" class="mt-4">
+    <nav aria-label="Patient pagination" class="mt-4" *ngIf="totalPages > 1">
         <ul class="pagination justify-content-center">
-            <li class="page-item">
-                <a class="page-link" href="#">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">
                     <i class="bi bi-chevron-left"></i>
-                </a>
+                </button>
             </li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">
+
+            <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+                <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">
                     <i class="bi bi-chevron-right"></i>
-                </a>
+                </button>
             </li>
         </ul>
+
+        <!-- Page Info -->
+        <div class="text-center mt-2">
+            <small class="text-muted">
+                Trang {{ currentPage }} / {{ totalPages }} -
+                Hiển thị {{ patients.length }} / {{ totalElements }} bệnh nhân
+            </small>
+        </div>
     </nav>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

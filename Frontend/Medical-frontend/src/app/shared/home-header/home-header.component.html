@@ -1,0 +1,27 @@
+<div class="group-header">
+    <img src="assets/img/logo.png" alt="Logo" class="logo" width="150" height="50">
+    <div class="d-flex align-items-center">
+        <span class="navbar-brand mb-0 fw-bold">Quản lý hồ sơ bệnh án</span>
+    </div>
+
+    <!-- Hiển thị nút đăng nhập nếu chưa đăng nhập -->
+    <div *ngIf="!isLoggedIn">
+        <a routerLink="/login">
+            <button class="btn btn-primary">
+                <i class="bi bi-person me-1"></i>
+                <span class="d-none d-md-inline">Đăng nhập</span>
+            </button>
+        </a>
+    </div>
+
+    <!-- Hiển thị thông tin user và nút đăng xuất nếu đã đăng nhập -->
+    <div *ngIf="isLoggedIn" class="d-flex align-items-center gap-2">
+        <span class="text-dark fw-semibold d-none d-md-inline">
+            Xin chào, {{ username || 'User' }}
+        </span>
+        <button class="btn btn-outline-danger" (click)="onLogout()">
+            <i class="bi bi-box-arrow-right me-1"></i>
+            <span class="d-none d-md-inline">Đăng xuất</span>
+        </button>
+    </div>
+</div>

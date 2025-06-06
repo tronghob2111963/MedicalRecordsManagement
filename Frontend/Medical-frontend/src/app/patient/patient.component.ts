@@ -2,38 +2,36 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PatientService, PatientListResponseDTO, ResponseData } from '../services/patient.service';
+import { PatientService, PatientListResponseDTO, ResponseData, PageResponse } from '../services/patient.service';
+import { HeaderComponent } from '../shared/header/header.component';
+import { HomeHeaderComponent } from '../shared/home-header/home-header.component';
 
 @Component({
   selector: 'app-patient',
-  imports: [RouterLink, CommonModule, FormsModule],
+  imports: [RouterLink, CommonModule, FormsModule ,HomeHeaderComponent],
   templateUrl: './patient.component.html',
   styleUrl: './patient.component.css'
 })
 export class PatientComponent implements OnInit {
+[x: string]: any;
 
   // Danh sách bệnh nhân
   patients: PatientListResponseDTO[] = [];
-  filteredPatients: PatientListResponseDTO[] = [];
+
+  // Phân trang
+  currentPage = 1;
+  pageSize = 6; // 6 bệnh nhân mỗi trang như trong template
+  totalElements = 0;
+  totalPages = 0;
+
+  // Sắp xếp
+  sortBy = 'ID:asc';
 
   // Loading state
-  isLoading: boolean = false;
+  isLoading = false;
 
   // Error handling
-  errorMessage: string = '';
-
-  // Search và Filter
-  searchTerm: string = '';
-  selectedStatus: string = '';
-
-  // Pagination
-  currentPage: number = 1;
-  patientsPerPage: number = 6;
-  totalPatients: number = 0;
-
-  // Statistics
-  totalPatientsCount: number = 248;
-Math: any;
+  errorMessage = '';
 
   constructor(private patientService: PatientService) {}
 
@@ -41,177 +39,130 @@ Math: any;
     this.loadPatients();
   }
 
-  /**
-   * Load danh sách bệnh nhân từ API
-   */
+  // Load danh sách bệnh nhân
   loadPatients(): void {
     this.isLoading = true;
     this.errorMessage = '';
-
-    this.patientService.getAllPatients().subscribe({
-      next: (response: ResponseData<PatientListResponseDTO[]>) => {
-        this.isLoading = false;
-        if (response.code === 200 && response.data) {
-          this.patients = response.data;
-          this.filteredPatients = [...this.patients];
-          this.totalPatients = this.patients.length;
-          this.totalPatientsCount = this.patients.length;
-        } else {
-          this.errorMessage = response.message || 'Không thể tải danh sách bệnh nhân';
+    this.patientService.getAllPatients(this.currentPage, this.pageSize, this.sortBy)
+      .subscribe({
+        next: (response: ResponseData<PageResponse<PatientListResponseDTO>>) => {
+          if (response.status === 200) {
+            this.patients = response.data.items;
+            this.currentPage = response.data.pageNo;
+            this.pageSize = response.data.pageSize;
+            this.totalElements = response.data.totalElements;
+            this.totalPages = response.data.totalPages;
+          } else {
+            this.errorMessage = response.message || 'Có lỗi xảy ra khi tải danh sách bệnh nhân';
+          }
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading patients:', error);
+          this.errorMessage = 'Không thể tải danh sách bệnh nhân. Vui lòng thử lại.';
+          this.isLoading = false;
         }
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = this.patientService.handleError(error);
-        console.error('Error loading patients:', error);
-      }
-    });
+      });
   }
 
-  /**
-   * Tìm kiếm bệnh nhân
-   */
-  onSearch(): void {
-    return  this.loadPatients();
-  }
-
-  /**
-   * Filter dữ liệu local
-   */
-  private filterLocalData(): void {
-    this.filteredPatients = this.patients.filter(patient => {
-      const matchesSearch = !this.searchTerm.trim() ||
-        patient.full_Name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        patient.phone_Number.includes(this.searchTerm);
-
-      // Note: Status filter cần được implement ở backend hoặc thêm field status
-      const matchesStatus = !this.selectedStatus; // Tạm thời bỏ qua status filter
-
-      return matchesSearch && matchesStatus;
-    });
-
-    this.currentPage = 1; // Reset về trang đầu
-  }
-
-  /**
-   * Reset search và filter
-   */
-  onResetFilter(): void {
-    this.searchTerm = '';
-    this.selectedStatus = '';
-    this.filteredPatients = [...this.patients];
-    this.currentPage = 1;
-  }
-
-  /**
-   * Tính tuổi từ ngày sinh
-   */
-  // calculateAge(dateOfBirth: string): number {
-  //  return this.patientService.calculateAge(dateOfBirth);
-  // }
-
-  // /**
-  //  * Tạo avatar từ tên
-  //  */
-  // generateAvatar(fullName: string): string {
-  //   return this.patientService.generateAvatar(fullName);
-  // }
-
-  /**
-   * Format ngày sinh
-   */
-  formatDate(dateStr: string): string {
-    if (!dateStr) return '';
-
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr;
-
-    return date.toLocaleDateString('vi-VN');
-  }
-
-  /**
-   * Lấy danh sách bệnh nhân cho trang hiện tại
-   */
-  getCurrentPagePatients(): PatientListResponseDTO[] {
-    const startIndex = (this.currentPage - 1) * this.patientsPerPage;
-    const endIndex = startIndex + this.patientsPerPage;
-    return this.filteredPatients.slice(startIndex, endIndex);
-  }
-
-  /**
-   * Tính tổng số trang
-   */
-  getTotalPages(): number {
-    return Math.ceil(this.filteredPatients.length / this.patientsPerPage);
-  }
-
-  /**
-   * Chuyển trang
-   */
+  // Chuyển trang
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.getTotalPages()) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
+      this.loadPatients();
     }
   }
 
-  /**
-   * Trang trước
-   */
+  // Trang trước
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.loadPatients();
     }
   }
 
-  /**
-   * Trang sau
-   */
+  // Trang sau
   nextPage(): void {
-    if (this.currentPage < this.getTotalPages()) {
+    if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.loadPatients();
     }
   }
 
-  /**
-   * Lấy array số trang để hiển thị
-   */
-  getPageNumbers(): number[] {
-    const totalPages = this.getTotalPages();
-    const pages: number[] = [];
+  // Xóa bệnh nhân
+  deletePatient(patientId: number): void {
+    if (confirm('Bạn có chắc chắn muốn xóa bệnh nhân này?')) {
+      this.patientService.deletePatient(patientId).subscribe({
+        next: (response) => {
+          if (response.status === 200) {
+            alert('Xóa bệnh nhân thành công!');
+            this.loadPatients(); // Reload danh sách
+          } else {
+            alert('Có lỗi xảy ra khi xóa bệnh nhân');
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting patient:', error);
+          alert('Không thể xóa bệnh nhân. Vui lòng thử lại.');
+        }
+      });
+    }
+  }
 
-    for (let i = 1; i <= totalPages; i++) {
+  // Tính tuổi từ ngày sinh
+  calculateAge(dateOfBirth: string): number {
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  }
+
+  // Lấy initials cho avatar
+  getInitials(fullName: string): string {
+    if (!fullName) return 'N/A';
+    
+    const names = fullName.trim().split(' ');
+    if (names.length === 1) {
+      return names[0].charAt(0).toUpperCase();
+    }
+    
+    return names[0].charAt(0).toUpperCase() + names[names.length - 1].charAt(0).toUpperCase();
+  }
+
+  // Lấy danh sách trang để hiển thị
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+    
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
-
+    
     return pages;
   }
 
-  /**
-   * Xử lý xóa bệnh nhân
-   */
-  onDeletePatient(patientName: string): void {
-    if (confirm(`Bạn có chắc chắn muốn xóa bệnh nhân "${patientName}"?`)) {
-      // TODO: Implement delete functionality
-      // Cần có ID để xóa, nhưng PatientListResponseDTO không có ID
-      // Có thể cần thêm ID vào DTO hoặc tìm cách khác
-      console.log('Delete patient:', patientName);
-    }
+  // Format ngày sinh
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
   }
 
-  /**
-   * Xuất Excel
-   */
-  onExportExcel(): void {
-    // TODO: Implement export Excel functionality
-    console.log('Export to Excel');
-  }
-
-  /**
-   * Refresh danh sách
-   */
-  onRefresh(): void {
+  // Refresh danh sách
+  refreshPatients(): void {
+    this.currentPage = 1;
     this.loadPatients();
   }
 }
-
-
