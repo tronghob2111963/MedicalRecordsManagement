@@ -2,20 +2,19 @@ package com.example.MedicalRecordsManagement.service;
 
 import com.example.MedicalRecordsManagement.dto.request.UserCreationRequest;
 import com.example.MedicalRecordsManagement.dto.request.UserPasswordRequest;
-import com.example.MedicalRecordsManagement.dto.response.UserResponse;
+import com.example.MedicalRecordsManagement.dto.response.PageResponse;
+import com.example.MedicalRecordsManagement.dto.response.UserResponseDTO;
 
 public interface UserService {
-    UserResponse findAll(String keyword, String sort, int page, int size);
+    PageResponse<?> getAllUser(int pageNo, int pageSize, String sortBy);
 
-    UserResponse findById(Long id);
 
-    UserResponse findByUsername(String username);
+    UserResponseDTO findByUsername(String username);
 
-    UserResponse findByEmail(String email);
 
     long save(UserCreationRequest req);
 
-    void update(UserCreationRequest req);
+    UserResponseDTO updateUer(Long id, UserCreationRequest req);
 
     void changePassword(UserPasswordRequest req);
 

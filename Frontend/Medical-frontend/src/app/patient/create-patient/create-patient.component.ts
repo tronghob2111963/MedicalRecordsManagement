@@ -90,7 +90,7 @@ export class CreatePatientComponent {
       const birthDate = new Date(patientData.date_of_birth);
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
-      
+
       if (birthDate > today) {
         this.formErrors.push('Ngày sinh không thể lớn hơn ngày hiện tại');
       } else if (age > 150) {
@@ -168,7 +168,6 @@ export class CreatePatientComponent {
         console.error('Error creating patient:', error);
 
         let errorMessage = 'Có lỗi xảy ra khi thêm bệnh nhân';
-        
         if (error.error?.message) {
           errorMessage = error.error.message;
         } else if (error.message) {
@@ -224,7 +223,7 @@ export class CreatePatientComponent {
 
   // Check if specific field has error
   hasFieldError(fieldName: string): boolean {
-    return this.formErrors.some(error => 
+    return this.formErrors.some(error =>
       error.toLowerCase().includes(this.getFieldDisplayName(fieldName).toLowerCase())
     );
   }
@@ -246,7 +245,7 @@ export class CreatePatientComponent {
   // Get errors for specific field
   getFieldErrors(fieldName: string): string[] {
     const displayName = this.getFieldDisplayName(fieldName);
-    return this.formErrors.filter(error => 
+    return this.formErrors.filter(error =>
       error.toLowerCase().includes(displayName.toLowerCase())
     );
   }

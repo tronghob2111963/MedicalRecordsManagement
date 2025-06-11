@@ -1,0 +1,135 @@
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ isEditMode ? 'Edit Doctor' : 'Add New Doctor' }}</h2>
+        </div>
+
+        <div class="card-body">
+            <!-- Loading Spinner -->
+            <div *ngIf="isLoading" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>{{ isEditMode ? 'Loading doctor data...' : 'Processing...' }}</p>
+            </div>
+
+            <!-- Success Message -->
+            <div *ngIf="successMessage" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ successMessage }}
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ errorMessage }}
+            </div>
+
+            <!-- Form -->
+            <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" [hidden]="isLoading">
+                <div class="form-row">
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label for="full_name" class="form-label">
+                            Full Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="full_name" formControlName="full_name" class="form-control"
+                            [class.invalid]="isFieldInvalid('full_name')" placeholder="Enter doctor's full name" />
+                        <div *ngIf="isFieldInvalid('full_name')" class="error-message">
+                            {{ getFieldError('full_name') }}
+                        </div>
+                    </div>
+
+                    <!-- Specialty -->
+                    <div class="form-group">
+                        <label for="specialty" class="form-label">
+                            Specialty <span class="required">*</span>
+                        </label>
+                        <select id="specialty" formControlName="specialty" class="form-control"
+                            [class.invalid]="isFieldInvalid('specialty')">
+                            <option value="">Select a specialty</option>
+                            <option *ngFor="let specialty of specialtyOptions" [value]="specialty">
+                                {{ specialty }}
+                            </option>
+                        </select>
+                        <div *ngIf="isFieldInvalid('specialty')" class="error-message">
+                            {{ getFieldError('specialty') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <!-- Phone Number -->
+                    <div class="form-group">
+                        <label for="phone_number" class="form-label">
+                            Phone Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" id="phone_number" formControlName="phone_number" class="form-control"
+                            [class.invalid]="isFieldInvalid('phone_number')" placeholder="Enter phone number" />
+                        <div *ngIf="isFieldInvalid('phone_number')" class="error-message">
+                            {{ getFieldError('phone_number') }}
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            Email <span class="required">*</span>
+                        </label>
+                        <input type="email" id="email" formControlName="email" class="form-control"
+                            [class.invalid]="isFieldInvalid('email')" placeholder="Enter email address" />
+                        <div *ngIf="isFieldInvalid('email')" class="error-message">
+                            {{ getFieldError('email') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <!-- License Number -->
+                    <div class="form-group">
+                        <label for="license_Number" class="form-label">
+                            License Number <span class="required">*</span>
+                        </label>
+                        <input type="text" id="license_Number" formControlName="license_Number" class="form-control"
+                            [class.invalid]="isFieldInvalid('license_Number')" placeholder="Enter license number" />
+                        <div *ngIf="isFieldInvalid('license_Number')" class="error-message">
+                            {{ getFieldError('license_Number') }}
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label for="status" class="form-label">
+                            Status <span class="required">*</span>
+                        </label>
+                        <select id="status" formControlName="status" class="form-control"
+                            [class.invalid]="isFieldInvalid('status')">
+                            <option *ngFor="let status of statusOptions" [value]="status.value">
+                                {{ status.label }}
+                            </option>
+                        </select>
+                        <div *ngIf="isFieldInvalid('status')" class="error-message">
+                            {{ getFieldError('status') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" [disabled]="doctorForm.invalid || isLoading">
+                        <i class="fas fa-save"></i>
+                        {{ isEditMode ? 'Update Doctor' : 'Create Doctor' }}
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" (click)="onReset()" [disabled]="isLoading">
+                        <i class="fas fa-undo"></i>
+                        Reset
+                    </button>
+
+                    <button type="button" class="btn btn-outline" (click)="onCancel()" [disabled]="isLoading">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>

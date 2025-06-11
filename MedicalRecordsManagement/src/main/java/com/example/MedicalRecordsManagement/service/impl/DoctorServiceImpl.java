@@ -47,6 +47,7 @@ public class DoctorServiceImpl implements DoctorService {
         Page<Doctor> doctors = doctorRepository.findAll(pageable);
         List<DoctorResponseDTO>  doctorResponse = doctors.stream().map(
                 Doctor -> DoctorResponseDTO.builder()
+                        .id(Doctor.getId())
                         .full_name(Doctor.getFull_name())
                         .specialty(Doctor.getSpecialty())
                         .phone_number(Doctor.getPhone_number())
@@ -74,6 +75,7 @@ public class DoctorServiceImpl implements DoctorService {
         }
         Doctor doctor = doctorRepository.findById(id).orElse(null);
         return DoctorResponseDTO.builder()
+                .id(doctor.getId())
                 .full_name(doctor.getFull_name())
                 .email(doctor.getEmail())
                 .phone_number(doctor.getPhone_number())
@@ -138,6 +140,7 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setEmail(doctorDTO.getEmail());
         doctor.setStatus(doctorDTO.getStatus());
         doctorRepository.save(doctor);
+
         return DoctorResponseDTO.builder()
                 .full_name(doctor.getFull_name())
                 .email(doctor.getEmail())

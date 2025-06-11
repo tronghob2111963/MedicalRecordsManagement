@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../enviroments/enviroment';
 
+
+
 // Interface cho Patient Request DTO
 export interface PatientRequestDTO {
   full_Name: string;
@@ -77,8 +79,6 @@ export class PatientService {
     const token = localStorage.getItem('accessToken');
     console.log('Token:', token);
     return new HttpHeaders({
-      // 'Content-Type': 'application/json',
-      // 'Authorization': token ? `Bearer ${token}` : ''
       'Content-Type': 'application/json',
       'Authorization': token ? `Bearer ${token}` : ''
     });
@@ -126,9 +126,9 @@ export class PatientService {
   }
 
   // Cập nhật thông tin bệnh nhân
-  updatePatient(idNumber: string, patientData: PatientRequestDTO): Observable<ResponseData<PatientDetailResponseDTO>> {
+  updatePatient(id: number, patientData: PatientRequestDTO): Observable<ResponseData<PatientDetailResponseDTO>> {
     return this.http.put<ResponseData<PatientDetailResponseDTO>>(
-      `${this.apiUrl}/update-patient?id_number=${idNumber}`,
+      `${this.apiUrl}/update-patient/${id}`,
       patientData,
       this.apiConfig
     );

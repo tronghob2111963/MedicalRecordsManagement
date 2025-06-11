@@ -1,1 +1,188 @@
-<p>doctor works!</p>
+<div class="doctor-container bg-white shadow-lg rounded-lg p-6 m-4 max-w-7xl mx-auto">
+    <div class="header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <span class="text-blue-600">👨‍⚕️</span>
+            Danh sách Bác sĩ
+        </h2>
+
+        <div class="action-buttons flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <!-- Nút Làm mới -->
+            <button
+                class="btn-refresh flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-2.5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none shadow-md hover:shadow-lg"
+                (click)="refresh()" [disabled]="isLoading">
+                <span *ngIf="!isLoading" class="text-lg">🔄</span>
+                <span *ngIf="isLoading" class="text-lg animate-spin">⏳</span>
+                <span class="font-medium">Làm mới</span>
+            </button>
+
+            <!-- Nút Thêm bác sĩ -->
+            <button
+                class="btn btn-refresh"
+                [routerLink]="['/create-doctor']">
+                <span class="text-lg">➕</span>
+                <span class="font-medium">Thêm bác sĩ</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls flex flex-wrap gap-6 mb-6">
+        <div class="control-group flex items-center gap-2">
+            <label for="pageSize" class="text-gray-700 font-medium">Hiển thị:</label>
+            <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()" [disabled]="isLoading"
+                class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+                <option [value]="5">5 bác sĩ</option>
+                <option [value]="10">10 bác sĩ</option>
+                <option [value]="20">20 bác sĩ</option>
+                <option [value]="50">50 bác sĩ</option>
+            </select>
+        </div>
+
+        <div class="control-group flex items-center gap-2">
+            <label for="sortBy" class="text-gray-700 font-medium">Sắp xếp theo:</label>
+            <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" [disabled]="isLoading"
+                class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+                <option *ngFor="let option of sortOptions" [value]="option.value">
+                    {{ option.label }}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage"
+        class="error-message bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
+        <strong class="font-semibold">Lỗi:</strong> {{ errorMessage }}
+        <button class="btn-retry ml-4 bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors"
+            (click)="refresh()">
+            Thử lại
+        </button>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading flex flex-col items-center justify-center py-8">
+        <div class="spinner border-t-4 border-blue-500 rounded-full w-8 h-8 animate-spin"></div>
+        <p class="mt-2 text-gray-600">Đang tải danh sách bác sĩ...</p>
+    </div>
+
+    <!-- Doctor Table -->
+    <div *ngIf="!isLoading && !errorMessage" class="table-container overflow-x-auto">
+        <table class="doctor-table w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-100 text-gray-700">
+                    <th class="p-3 text-left font-semibold">ID</th>
+                    <th class="p-3 text-left font-semibold">Họ và Tên</th>
+                    <th class="p-3 text-left font-semibold">Chuyên khoa</th>
+                    <th class="p-3 text-left font-semibold">Số điện thoại</th>
+                    <th class="p-3 text-left font-semibold">Email</th>
+                    <th class="p-3 text-left font-semibold">Số giấy phép</th>
+                    <th class="p-3 text-left font-semibold">Trạng thái</th>
+                    <th class="p-3 text-left font-semibold">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let doctor of doctors; trackBy: trackByDoctorId"
+                    class="doctor-row border-b hover:bg-gray-50 transition-colors">
+                    <td class="p-3">{{ doctor.id }}</td>
+                    <td class="doctor-name p-3 font-medium text-gray-800">{{ doctor.full_name }}</td>
+                    <td class="p-3">{{ doctor.specialty }}</td>
+                    <td class="p-3">
+                        <a *ngIf="doctor.phone_number" [href]="'tel:' + doctor.phone_number"
+                            class="phone-link text-blue-600 hover:underline">
+                            {{ doctor.phone_number }}
+                        </a>
+                        <span *ngIf="!doctor.phone_number" class="no-data text-gray-500">Chưa cập nhật</span>
+                    </td>
+                    <td class="p-3">
+                        <a *ngIf="doctor.email" [href]="'mailto:' + doctor.email"
+                            class="email-link text-blue-600 hover:underline">
+                            {{ doctor.email }}
+                        </a>
+                        <span *ngIf="!doctor.email" class="no-data text-gray-500">Chưa cập nhật</span>
+                    </td>
+                    <td class="license-number p-3">{{ doctor.license_Number || 'Chưa cập nhật' }}</td>
+                    <td class="p-3">
+                        <span class="status-badge px-2 py-1 rounded-full text-sm" [ngClass]="{
+                                'bg-green-100 text-green-700': doctor.status === 'active',
+                                'bg-red-100 text-red-700': doctor.status === 'inactive',
+                                'bg-yellow-100 text-yellow-700': doctor.status === 'pending'
+                              }">
+                            {{ getStatusText(doctor.status) }}
+                        </span>
+                    </td>
+                    <td class="action-buttons p-3 flex gap-2">
+                        <!-- Nút Chi tiết - Sử dụng click event -->
+                        <button
+                            class="btn-action btn-view bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+                            title="Xem chi tiết" (click)="viewDoctorDetail(doctor.id)">
+                            👁️ Chi tiết
+                        </button>
+
+                        <!-- Hoặc sử dụng routerLink trực tiếp -->
+                        <!-- <a [routerLink]="['/doctor-detail', doctor.id]"
+                           class="btn-action btn-view bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors inline-flex items-center"
+                           title="Xem chi tiết">
+                            👁️ Chi tiết
+                        </a> -->
+
+                        <button
+                            class="btn-action btn-edit bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 transition-colors"
+                            title="Chỉnh sửa thông tin" (click)="editDoctor(doctor.id)">
+                            ✏️ Sửa
+                        </button>
+                        <button
+                            class="btn-action btn-delete bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors"
+                            title="Xóa bác sĩ" (click)="deleteDoctor(doctor.id, doctor.full_name)">
+                            🗑️ Xóa
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div *ngIf="doctors.length === 0" class="empty-state text-center py-8 text-gray-600">
+            <p class="text-lg">Không tìm thấy bác sĩ nào.</p>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && !errorMessage && totalPages > 1"
+        class="pagination flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+        <div class="pagination-info text-gray-600">
+            Hiển thị {{ ((currentPage - 1) * pageSize) + 1 }} -
+            {{ getDisplayedTo() }}
+            trên tổng số {{ totalElements }} bác sĩ
+        </div>
+
+        <div class="pagination-controls flex gap-2">
+            <button
+                class="btn-page bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-colors disabled:bg-gray-50 disabled:text-gray-400"
+                (click)="onPageChange(1)" [disabled]="currentPage === 1">
+                ⏮️ Đầu
+            </button>
+            <button
+                class="btn-page bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-colors disabled:bg-gray-50 disabled:text-gray-400"
+                (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+                ⬅️ Trước
+            </button>
+            <button *ngFor="let page of getPageNumbers()" class="btn-page px-3 py-1 rounded-lg transition-colors"
+                [ngClass]="{
+                        'bg-blue-500 text-white hover:bg-blue-600': page === currentPage,
+                        'bg-gray-100 text-gray-700 hover:bg-gray-200': page !== currentPage
+                    }" (click)="onPageChange(page)">
+                {{ page }}
+            </button>
+            <button
+                class="btn-page bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-colors disabled:bg-gray-50 disabled:text-gray-400"
+                (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+                Sau ➡️
+            </button>
+            <button
+                class="btn-page bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-colors disabled:bg-gray-50 disabled:text-gray-400"
+                (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
+                Cuối ⏭️
+            </button>
+        </div>
+    </div>
+</div>

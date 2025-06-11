@@ -40,7 +40,7 @@ public class PatientController {
 
     @GetMapping("/patient-detail/{id}")
     @Operation(summary = "Get patient by ID")
-//     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> getPatientById(@PathVariable Long id) {
         log.info("Fetching patient with ID: {}", id);
         try {
@@ -65,14 +65,15 @@ public class PatientController {
             return new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error creating patient: " + e.getMessage());
         }
     }
-    @PutMapping("/update-patient")
+    @PutMapping("/update-patient/{id}")
     @Operation(summary = "Update a patient")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseData<?> updatePatient(@RequestParam String id_number, PatientRequestDTO patientDTO) {
-        log.info("Updating patient with ID_number: {}", id_number);
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseData<?> updatePatient(@PathVariable Long id,
+                                         @RequestBody PatientRequestDTO patientDTO) {
+        log.info("Updating patient with ID: {}", id);
         try {
             return new ResponseData<>(HttpStatus.OK.value(), "Success",
-                    patientService.updatePatient(id_number, patientDTO));
+                    patientService.updatePatient(id, patientDTO));
         } catch (Exception e) {
             log.error("Error updating patient: {}", e.getMessage());
             return new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error updating patient: " + e.getMessage());
@@ -81,7 +82,7 @@ public class PatientController {
 
     @DeleteMapping("/delete-patient/{id}")
     @Operation(summary = "Delete a patient")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseData<?> deletePatient(@PathVariable Long id) {
         log.info("Deleting patient with ID: {}", id);
         try {

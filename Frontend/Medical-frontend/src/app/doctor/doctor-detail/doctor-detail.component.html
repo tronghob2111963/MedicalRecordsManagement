@@ -1,0 +1,87 @@
+<div class="doctor-detail-container">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Đang tải thông tin bác sĩ...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h3 class="error-title">Có lỗi xảy ra</h3>
+        <p class="error-message">{{ error }}</p>
+        <button class="retry-button" (click)="loadDoctorDetails()">
+            Thử lại
+        </button>
+    </div>
+
+    <!-- Doctor Details -->
+    <div *ngIf="doctor && !loading && !error" class="doctor-content">
+        <!-- Header Section -->
+        <div class="doctor-header">
+            <div class="doctor-basic-info">
+                <h1 class="doctor-name">{{ doctor.full_name }}</h1>
+                <p class="doctor-title">{{ doctor.specialty }}</p>
+            </div>
+        </div>
+
+        <!-- Main Information -->
+        <div class="doctor-main-info">
+            <div class="info-grid">
+                <!-- Contact Information -->
+                <div class="info-card">
+                    <h3 class="card-title">
+                        <span class="card-icon">📞</span>
+                        Thông tin liên hệ
+                    </h3>
+                    <div class="info-item">
+                        <span class="label">Số điện thoại:</span>
+                        <span class="value">{{ doctor.phone_number }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Email:</span>
+                        <span class="value">{{ doctor.email }}</span>
+                    </div>
+                </div>
+
+                <!-- Professional Information -->
+                <div class="info-card">
+                    <h3 class="card-title">
+                        <span class="card-icon">🏥</span>
+                        Thông tin nghề nghiệp
+                    </h3>
+                    <div class="info-item">
+                        <span class="label">Chuyên khoa:</span>
+                        <span class="value">{{ doctor.specialty }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Số giấy phép:</span>
+                        <span class="value license-number">{{ doctor.license_Number }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Trạng thái:</span>
+                        <span class="value status" [class]="doctor.status.toLowerCase()">
+                            {{ getStatusText(doctor.status) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary">
+                <span class="btn-icon">📅</span>
+                Đặt lịch khám
+            </button>
+            <button class="btn btn-secondary">
+                <span class="btn-icon">💬</span>
+                Liên hệ
+            </button>
+            <button class="btn btn-outline" (click)="goBack()">
+                <span class="btn-icon">←</span>
+                Quay lại
+            </button>
+        </div>
+    </div>
+    </div>

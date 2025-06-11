@@ -8,7 +8,7 @@ public interface PatientService {
     PageResponse<?> getAllPatients(int pageNo, int pageSize, String sortBy);
     PatientDetailResponseDTO getPatientById(Long id);
     PatientDetailResponseDTO createPatient(PatientRequestDTO patientDTO);
-    PatientDetailResponseDTO updatePatient(String id_number, PatientRequestDTO patientDTO);
+    PatientDetailResponseDTO updatePatient(Long id, PatientRequestDTO patientDTO);
     void deletePatient(Long id);
     Long CoutnPatients();
 

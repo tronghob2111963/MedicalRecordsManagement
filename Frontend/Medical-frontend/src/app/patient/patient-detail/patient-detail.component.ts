@@ -56,8 +56,8 @@ PatientDetailResponseDTO: any;
   }
 
   onEdit(): void {
-    if (this.patient?.id_number) {
-      this.router.navigate(['/patients/edit', this.patient.id_number]);
+    if (this.patientId) {
+      this.router.navigate(['/update-patient', this.patientId]);
     }
   }
 

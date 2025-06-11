@@ -143,24 +143,36 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PatientDetailResponseDTO updatePatient(String id_number, PatientRequestDTO patientDTO) {
-        log.info("Updating patient with ID_number: {}", id_number);
-        if(id_number == null) {
+    public PatientDetailResponseDTO updatePatient(Long id, PatientRequestDTO patientDTO) {
+        log.info("Updating patient with ID: {}", id);
+        log.info("Updating patient with ID_number: {}", patientDTO);
+        //kiem tra xem nguoi dung co nhap id_number hay khong
+        if(id == null) {
             log.error("Patient ID_number is null");
             throw new RuntimeException("Patient ID_number is null");
         }
-        if(patientRepository.existsById_Number(id_number) == false) {
-            log.error("Patient not found with ID_number: {}", id_number);
-            throw new RuntimeException("Patient not found with ID_number: " + id_number);
+
+        //kiem tra xem nguoi dung co nhap id_number co ton tai trong database hay khong
+        if(patientRepository.existsById(id) == false) {
+            log.error("Patient not found with ID_number: {}", id);
+            throw new RuntimeException("Patient not found with ID_number: " + id);
         }
-        Patient patient = patientRepository.findById_Number(id_number);
+        //cap nhat thong tin nguoi dung
+        Patient patient = patientRepository.findById(id).orElse(null);
         patient.setFull_Name(patientDTO.getFull_Name());
         patient.setDate_Of_Birth(LocalDate.parse(patientDTO.getDate_of_birth()));
         patient.setGender(patientDTO.getGender());
         patient.setPhone_Number(patientDTO.getPhone_Number());
         patient.setAddress(patientDTO.getAddress());
         patient.setEmail(patientDTO.getEmail());
+        patient.setId_number(patientDTO.getId_Number());
+        patient.setBlood_type(patientDTO.getBlood_type());
+        patient.setMarital_status(patientDTO.getMarital_status());
+        patient.setOccupation(patientDTO.getOccupation());
+        patient.setAllergies(patientDTO.getAllergies());
         patientRepository.save(patient);
+
+        //tra ve thong tin nguoi dung sau khi cap nhat
         return PatientDetailResponseDTO.builder()
                 .full_Name(patient.getFull_Name())
                 .gender(patient.getGender())

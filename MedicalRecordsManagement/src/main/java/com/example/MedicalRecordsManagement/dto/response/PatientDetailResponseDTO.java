@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class PatientDetailResponseDTO {
-
     private String full_Name;
     private String gender;
     private String Date_Of_Birth;

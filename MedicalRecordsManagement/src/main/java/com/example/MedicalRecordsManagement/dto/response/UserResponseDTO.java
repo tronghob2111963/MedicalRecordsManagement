@@ -1,6 +1,12 @@
 package com.example.MedicalRecordsManagement.dto.response;
 
-public class UserResponse {
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class UserResponseDTO {
     private String username;
     private String password;
     private String role;
