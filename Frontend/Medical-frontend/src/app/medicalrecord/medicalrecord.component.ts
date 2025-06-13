@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MedicalrecordService, MedicalRecordResponse, PageResponse, ResponseData } from '../services/medicalrecord.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-medicalrecord',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterLink],
   templateUrl: './medicalrecord.component.html',
   styleUrl: './medicalrecord.component.css'
 })
@@ -37,7 +38,7 @@ export class MedicalrecordComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
 
-  constructor(private medicalRecordService: MedicalrecordService) {}
+  constructor(private medicalRecordService: MedicalrecordService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadMedicalRecords();
@@ -49,7 +50,6 @@ export class MedicalrecordComponent implements OnInit {
   loadMedicalRecords(): void {
     this.isLoading = true;
     this.errorMessage = '';
-   
        this.medicalRecordService.getAllMedicalRecords(this.currentPage, this.pageSize, this.sortBy)
          .subscribe({
            next: (response: ResponseData<PageResponse<MedicalRecordResponse>>) => {
@@ -71,6 +71,9 @@ export class MedicalrecordComponent implements OnInit {
            }
          });
   }
+  viewMedicalDetail(id: number): void {
+    this.router.navigate(['/medical-record', id]);
+  }
 
   /**
    * Handle page change
@@ -80,6 +83,10 @@ export class MedicalrecordComponent implements OnInit {
       this.currentPage = page;
       this.loadMedicalRecords();
     }
+  }
+
+  editMedicalRecord(id: number): void {
+    this.router.navigate(['/update-medical-record', id]);
   }
 
   /**
@@ -160,14 +167,4 @@ export class MedicalrecordComponent implements OnInit {
   }
 }
 
-// import { Component } from '@angular/core';
 
-// @Component({
-//   selector: 'app-medicalrecord',
-//   imports: [],
-//   templateUrl: './medicalrecord.component.html',
-//   styleUrl: './medicalrecord.component.css'
-// })
-// export class MedicalrecordComponent {
-
-// }

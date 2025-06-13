@@ -10,6 +10,9 @@ import { DoctorDetailComponent } from './doctor/doctor-detail/doctor-detail.comp
 import { DoctorEditComponent } from './doctor/doctor-edit/doctor-edit.component';
 import { CreateDoctorComponent } from './doctor/create-doctor/create-doctor.component';
 import { MedicalrecordComponent } from './medicalrecord/medicalrecord.component';
+import { MedicalrecordDetailComponent } from './medicalrecord/medicalrecord-detail/medicalrecord-detail.component';
+import { MedicalrecordUpdateComponent } from './medicalrecord/medicalrecord-update/medicalrecord-update.component';
+import { MedicalrecordCreateComponent } from './medicalrecord/medicalrecord-create/medicalrecord-create.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -22,5 +25,8 @@ export const routes: Routes = [
     {path: 'doctor-detail/:id', component: DoctorDetailComponent},
     {path: 'edit-doctor/:id', component: DoctorEditComponent},
     {path: 'create-doctor', component: CreateDoctorComponent},
-    {path: 'medical-records', component: MedicalrecordComponent}
+    {path: 'medical-records', component: MedicalrecordComponent},
+    {path: 'medical-record/:id', component: MedicalrecordDetailComponent},
+    {path: 'update-medical-record/:id', component: MedicalrecordUpdateComponent},
+    {path: 'create-medical-record', component: MedicalrecordCreateComponent},
 ];

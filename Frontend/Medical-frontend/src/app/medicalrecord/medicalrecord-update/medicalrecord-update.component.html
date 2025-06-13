@@ -1,0 +1,186 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Cập nhật hồ sơ y tế</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a routerLink="/dashboard" class="text-decoration-none">Trang chủ</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a routerLink="/medical-records" class="text-decoration-none">Hồ sơ y tế</a>
+                    </li>
+                    <li class="breadcrumb-item active">Cập nhật</li>
+                </ol>
+            </nav>
+        </div>
+        <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại
+        </button>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Đang tải...</span>
+        </div>
+        <p class="mt-2 text-muted">Đang tải thông tin hồ sơ...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+
+    <!-- Success message -->
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        {{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <!-- Main content -->
+    <div *ngIf="!isLoading && currentRecord" class="row">
+        <!-- Current record info -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin hiện tại
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">ID hồ sơ:</label>
+                        <p class="mb-0">{{ currentRecord.id }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên bệnh nhân:</label>
+                        <p class="mb-0">{{ currentRecord.patient_Name }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên bác sĩ:</label>
+                        <p class="mb-0">{{ currentRecord.doctor_Name }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ngày khám:</label>
+                        <p class="mb-0">{{ formatDate(currentRecord.visit_date) }}</p>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-bold">Trạng thái:</label>
+                        <p class="mb-0">{{ currentRecord.status }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update form -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form #updateForm="ngForm" (ngSubmit)="updateMedicalRecord()">
+                        <div class="row">
+                            <!-- Patient ID -->
+                            <div class="col-md-6 mb-3">
+                                <label for="patientId" class="form-label">
+                                    <i class="fas fa-user me-1"></i>ID bệnh nhân <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control" id="patientId" name="patientId"
+                                    [(ngModel)]="medicalRecord.patient_id" required min="1"
+                                    placeholder="Nhập ID bệnh nhân">
+                            </div>
+
+                            <!-- Doctor ID -->
+                            <div class="col-md-6 mb-3">
+                                <label for="doctorId" class="form-label">
+                                    <i class="fas fa-user-md me-1"></i>ID bác sĩ <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control" id="doctorId" name="doctorId"
+                                    [(ngModel)]="medicalRecord.doctor_id" required min="1" placeholder="Nhập ID bác sĩ">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Visit Date -->
+                            <div class="col-md-6 mb-3">
+                                <label for="visitDate" class="form-label">
+                                    <i class="fas fa-calendar me-1"></i>Ngày khám <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="visitDate" name="visitDate"
+                                    [(ngModel)]="medicalRecord.visit_date" required>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">
+                                    <i class="fas fa-flag me-1"></i>Trạng thái
+                                </label>
+                                <select class="form-select" id="status" name="status"
+                                    [(ngModel)]="medicalRecord.status">
+                                    <option *ngFor="let option of statusOptions" [value]="option.value">
+                                        {{ option.label }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Diagnosis -->
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label">
+                                <i class="fas fa-stethoscope me-1"></i>Chẩn đoán <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3"
+                                [(ngModel)]="medicalRecord.diagnosis" required
+                                placeholder="Nhập chẩn đoán của bác sĩ..."></textarea>
+                        </div>
+
+                        <!-- Treatment -->
+                        <div class="mb-3">
+                            <label for="treatment" class="form-label">
+                                <i class="fas fa-pills me-1"></i>Phương pháp điều trị <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="treatment" name="treatment" rows="3"
+                                [(ngModel)]="medicalRecord.treatment" required
+                                placeholder="Nhập phương pháp điều trị..."></textarea>
+                        </div>
+
+                        <!-- Note -->
+                        <div class="mb-4">
+                            <label for="note" class="form-label">
+                                <i class="fas fa-sticky-note me-1"></i>Ghi chú
+                            </label>
+                            <textarea class="form-control" id="note" name="note" rows="3"
+                                [(ngModel)]="medicalRecord.note" placeholder="Nhập ghi chú thêm (nếu có)..."></textarea>
+                        </div>
+
+                        <!-- Action buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success"
+                                [disabled]="isSaving || !updateForm.form.valid">
+                                <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+                                <i *ngIf="!isSaving" class="fas fa-save me-2"></i>
+                                {{ isSaving ? 'Đang lưu...' : 'Cập nhật' }}
+                            </button>
+
+                            <button type="button" class="btn btn-warning" (click)="resetForm()" [disabled]="isSaving">
+                                <i class="fas fa-undo me-2"></i>Khôi phục
+                            </button>
+
+                            <button type="button" class="btn btn-secondary" (click)="goBack()" [disabled]="isSaving">
+                                <i class="fas fa-times me-2"></i>Hủy
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>

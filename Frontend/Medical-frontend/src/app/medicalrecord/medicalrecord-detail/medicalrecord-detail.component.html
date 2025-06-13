@@ -1,0 +1,120 @@
+<div class="medical-record-detail-container">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Đang tải thông tin bệnh án...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-container">
+        <div class="error-message">
+            <i class="error-icon">⚠️</i>
+            <p>{{ error }}</p>
+        </div>
+        <button class="btn btn-secondary" (click)="onBack()">Quay lại</button>
+    </div>
+
+    <!-- Medical Record Details -->
+    <div *ngIf="medicalRecord && !loading && !error" class="medical-record-content">
+        <!-- Header -->
+        <div class="record-header">
+            <div class="header-info">
+                <h1>Chi tiết bệnh án #{{ medicalRecord.id }}</h1>
+                <span class="status-badge" [ngClass]="getStatusClass(medicalRecord.status)">
+                    {{ getStatusText(medicalRecord.status) }}
+                </span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" (click)="onEdit()">
+                    <i class="icon">✏️</i>
+                    Chỉnh sửa
+                </button>
+                <button class="btn btn-danger" (click)="onDelete()">
+                    <i class="icon">🗑️</i>
+                    Xóa
+                </button>
+            </div>
+        </div>
+
+        <!-- Patient and Doctor Information -->
+        <div class="info-section">
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>Thông tin bệnh nhân</h3>
+                    <div class="info-item">
+                        <label>Tên bệnh nhân:</label>
+                        <span>{{ medicalRecord.patient_Name }}</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Thông tin bác sĩ</h3>
+                    <div class="info-item">
+                        <label>Tên bác sĩ:</label>
+                        <span>{{ medicalRecord.doctor_Name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visit Information -->
+        <div class="info-section">
+            <div class="info-card full-width">
+                <h3>Thông tin khám bệnh</h3>
+                <div class="info-grid-2">
+                    <div class="info-item">
+                        <label>Ngày khám:</label>
+                        <span>{{ formatDate(medicalRecord.visit_date) }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Trạng thái:</label>
+                        <span class="status-text" [ngClass]="getStatusClass(medicalRecord.status)">
+                            {{ getStatusText(medicalRecord.status) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Information -->
+        <div class="info-section">
+            <div class="info-card full-width">
+                <h3>Thông tin y tế</h3>
+                <div class="medical-info">
+                    <div class="info-item vertical">
+                        <label>Chẩn đoán:</label>
+                        <div class="content-box">
+                            <p>{{ medicalRecord.diagnosis }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item vertical">
+                        <label>Phương pháp điều trị:</label>
+                        <div class="content-box">
+                            <p>{{ medicalRecord.treatment }}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item vertical" *ngIf="medicalRecord.note">
+                        <label>Ghi chú:</label>
+                        <div class="content-box">
+                            <p>{{ medicalRecord.note }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-section">
+            <button class="btn btn-secondary" (click)="onBack()">
+                <i class="icon">⬅️</i>
+                Quay lại danh sách
+            </button>
+            <button class="btn btn-primary" (click)="onEdit()">
+                <i class="icon">✏️</i>
+                Chỉnh sửa bệnh án
+            </button>
+        </div>
+    </div>
+    </div>

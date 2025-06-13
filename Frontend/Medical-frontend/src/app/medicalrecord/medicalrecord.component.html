@@ -79,8 +79,8 @@
                        <strong>{{ record.note }}</strong>
                     </td>
                     <td class="actions-cell">
-                        <button class="action-btn view-btn">View</button>
-                        <button class="action-btn edit-btn">Edit</button>
+                        <button class="action-btn view-btn" (click)=" viewMedicalDetail(record.id)">View</button>
+                        <button class="action-btn edit-btn" (click)="editMedicalRecord(record.id)">Edit</button>
                     </td>
                 </tr>
             </tbody>

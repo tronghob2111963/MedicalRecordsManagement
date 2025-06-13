@@ -8,20 +8,23 @@ export interface MedicalRecordRequestDTO {
   diagnosis: string;
   treatment: string;
   visit_date: string; // Format: YYYY-MM-DD
-  Note: string;
+  note: string;
   status?: string; // Default: "Under_treatment"
 }
 
 // Response interfaces based on Java DTOs
 export interface MedicalRecordDetailResponse {
   id: number;
+  patient_id: number;
+  doctor_id: number;
   patient_Name: string;
-  dotor_Name: string; // Note: keeping original typo from Java code
+  doctor_Name: string; // Note: keeping original typo from Java code
   diagnosis: string;
   treatment: string;
   visit_date: string;
-  Note: string;
+  note: string;
   status: string;
+
 }
 
 export interface MedicalRecordResponse {
@@ -80,7 +83,9 @@ export class MedicalrecordService {
       status: medicalRecord.status || 'Under_treatment'
     };
 
-    return this.http.post<ResponseData<MedicalRecordDetailResponse>>(`${this.baseUrl}/create`, requestData);
+    return this.http.post<ResponseData<MedicalRecordDetailResponse>>(`${this.baseUrl}/create`,
+      requestData,
+    this.apiConfig);
   }
 
   /**
@@ -102,6 +107,17 @@ export class MedicalrecordService {
       { ...this.apiConfig, params }
     );
   }
+
+  getMedicalRecordById(id: number): Observable<ResponseData<MedicalRecordDetailResponse>> {
+      const params = new HttpParams().set('id', id.toString());
+      return this.http.get<ResponseData<MedicalRecordDetailResponse>>(
+        `${this.baseUrl}/medical-record/${id}`,
+        {
+          ...this.apiConfig,
+          params
+        }
+      );
+    }
 
   /**
    * Get medical records by patient ID with pagination and sorting
@@ -157,10 +173,12 @@ export class MedicalrecordService {
       ...medicalRecord,
       status: medicalRecord.status || 'Under_treatment'
     };
-    
     return this.http.put<ResponseData<MedicalRecordResponse>>(
       `${this.baseUrl}/update/${id}`,
-      requestData
+      requestData,
+      {
+        ...this.apiConfig,
+      }
     );
   }
 
@@ -169,7 +187,7 @@ export class MedicalrecordService {
    * Requires ADMIN role
    */
   deleteMedicalRecord(id: number): Observable<ResponseData<string>> {
-    return this.http.delete<ResponseData<string>>(`${this.baseUrl}/delete/${id}`);
+    return this.http.delete<ResponseData<string>>(`${this.baseUrl}/delete/${id}`, this.apiConfig);
   }
 
   // Helper methods for error handling and data transformation

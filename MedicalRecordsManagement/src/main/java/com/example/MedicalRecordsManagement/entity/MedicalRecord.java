@@ -53,6 +53,3 @@ public class MedicalRecord {
 
 }
 
-//Diagnosis NVARCHAR(500),
-//Treatment NVARCHAR(500),
-//Visit_Date DATETIME NOT NULL,

@@ -92,6 +92,20 @@ public class MedicalRecordController {
         }
     }
 
+    @GetMapping("/medical-record/{id}")
+    @Operation(summary = "Get a medical record by ID")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
+    public ResponseData<?> getMedicalRecordById(@PathVariable Long id) {
+        log.info("Fetching medical record with ID: {}", id);
+        try {
+            return new ResponseData<>(HttpStatus.OK.value(), "Success",
+                    medicalRecordService.getMedicalRecordDetail(id));
+        } catch (Exception e) {
+            log.error("Error fetching medical record: {}", e.getMessage());
+            return new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching medical record: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     @Operation(summary = "Update a medical record")
@@ -99,7 +113,7 @@ public class MedicalRecordController {
             @PathVariable Long id,
             @RequestBody MedicalRecordRequestDTO requestDTO
     ) {
-        log.info("Updating medical record with ID: {}", id);
+        log.info("Updating medical record with ID: {}", id, requestDTO);
         try {
             return new ResponseData<>(HttpStatus.OK.value(), "Success",
                     medicalRecordService.updateMedicalRecord(id, requestDTO));

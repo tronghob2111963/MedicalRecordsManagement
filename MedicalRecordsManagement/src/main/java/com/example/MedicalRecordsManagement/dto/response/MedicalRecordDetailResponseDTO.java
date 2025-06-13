@@ -10,8 +10,10 @@ import java.time.LocalDateTime;
 @Data
 public class MedicalRecordDetailResponseDTO {
     private Long id;
+    private Long patient_id;
+    private Long doctor_id;
     private String patient_Name;
-    private String dotor_Name;
+    private String doctor_Name;
     private String diagnosis;
     private String treatment;
     private String visit_date;

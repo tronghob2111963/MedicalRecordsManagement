@@ -1,0 +1,132 @@
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="title">Tạo Hồ Sơ Bệnh Án Mới</h2>
+        </div>
+
+        <div class="card-body">
+            <!-- Success Message -->
+            <div *ngIf="successMessage" class="alert alert-success">
+                <i class="icon-success">✓</i>
+                {{ successMessage }}
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-error">
+                <i class="icon-error">⚠</i>
+                {{ errorMessage }}
+            </div>
+
+            <form [formGroup]="medicalRecordForm" (ngSubmit)="onSubmit()" class="form">
+                <div class="form-row">
+                    <!-- Patient ID -->
+                    <div class="form-group">
+                        <label for="patient_id" class="form-label">
+                            ID Bệnh Nhân <span class="required">*</span>
+                        </label>
+                        <input type="number" id="patient_id" formControlName="patient_id" class="form-control"
+                            [class.error]="isFieldInvalid('patient_id')" placeholder="Nhập ID bệnh nhân" />
+                        <div *ngIf="isFieldInvalid('patient_id')" class="error-message">
+                            {{ getFieldError('patient_id') }}
+                        </div>
+                    </div>
+
+                    <!-- Doctor ID -->
+                    <div class="form-group">
+                        <label for="doctor_id" class="form-label">
+                            ID Bác Sĩ <span class="required">*</span>
+                        </label>
+                        <input type="number" id="doctor_id" formControlName="doctor_id" class="form-control"
+                            [class.error]="isFieldInvalid('doctor_id')" placeholder="Nhập ID bác sĩ" />
+                        <div *ngIf="isFieldInvalid('doctor_id')" class="error-message">
+                            {{ getFieldError('doctor_id') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <!-- Visit Date -->
+                    <div class="form-group">
+                        <label for="visit_date" class="form-label">
+                            Ngày Khám <span class="required">*</span>
+                        </label>
+                        <input type="date" id="visit_date" formControlName="visit_date" class="form-control"
+                            [class.error]="isFieldInvalid('visit_date')" />
+                        <div *ngIf="isFieldInvalid('visit_date')" class="error-message">
+                            {{ getFieldError('visit_date') }}
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label for="status" class="form-label">
+                            Trạng Thái <span class="required">*</span>
+                        </label>
+                        <select id="status" formControlName="status" class="form-control"
+                            [class.error]="isFieldInvalid('status')">
+                            <option value="">Chọn trạng thái</option>
+                            <option *ngFor="let option of statusOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                        <div *ngIf="isFieldInvalid('status')" class="error-message">
+                            {{ getFieldError('status') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagnosis -->
+                <div class="form-group">
+                    <label for="diagnosis" class="form-label">
+                        Chẩn Đoán <span class="required">*</span>
+                    </label>
+                    <textarea id="diagnosis" formControlName="diagnosis" class="form-control textarea"
+                        [class.error]="isFieldInvalid('diagnosis')" placeholder="Nhập chẩn đoán chi tiết..."
+                        rows="3"></textarea>
+                    <div *ngIf="isFieldInvalid('diagnosis')" class="error-message">
+                        {{ getFieldError('diagnosis') }}
+                    </div>
+                </div>
+
+                <!-- Treatment -->
+                <div class="form-group">
+                    <label for="treatment" class="form-label">
+                        Phương Pháp Điều Trị <span class="required">*</span>
+                    </label>
+                    <textarea id="treatment" formControlName="treatment" class="form-control textarea"
+                        [class.error]="isFieldInvalid('treatment')" placeholder="Nhập phương pháp điều trị..."
+                        rows="3"></textarea>
+                    <div *ngIf="isFieldInvalid('treatment')" class="error-message">
+                        {{ getFieldError('treatment') }}
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <div class="form-group">
+                    <label for="Note" class="form-label">
+                        Ghi Chú
+                    </label>
+                    <textarea id="Note" formControlName="Note" class="form-control textarea"
+                        placeholder="Nhập ghi chú thêm (tùy chọn)..." rows="2"></textarea>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+                        Hủy
+                    </button>
+
+                    <button type="button" class="btn btn-outline" (click)="onReset()" [disabled]="isSubmitting">
+                        Đặt Lại
+                    </button>
+
+                    <button type="submit" class="btn btn-primary"
+                        [disabled]="isSubmitting || medicalRecordForm.invalid">
+                        <span *ngIf="isSubmitting" class="loading-spinner"></span>
+                        {{ isSubmitting ? 'Đang tạo...' : 'Tạo Hồ Sơ' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>

@@ -72,7 +72,7 @@ public class MedicalRecordImpl implements MedicalRecordService {
         MedicalRecordDetailResponseDTO response = MedicalRecordDetailResponseDTO.builder()
                 .id(medicalRecord.getId())
                 .patient_Name(medicalRecord.getPatient_id().getFull_Name())
-                .dotor_Name(medicalRecord.getDoctor_id().getFull_name())
+                .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
                 .diagnosis(medicalRecord.getDiagnosis())
                 .treatment(medicalRecord.getTreatment())
                 .visit_date(medicalRecord.getVisit_date().toString())
@@ -220,10 +220,12 @@ public class MedicalRecordImpl implements MedicalRecordService {
         Patient patient_id = patientRepository.findById(medicalRecordRequestDTO.getPatient_id())
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found with ID: " + medicalRecordRequestDTO.getPatient_id()));
         medicalRecord.setDoctor_id(doctor_id);
-        medicalRecord.setNote(medicalRecordRequestDTO.getNote());
         medicalRecord.setStatus(MedicalRecordStatus.valueOf(medicalRecordRequestDTO.getStatus()));
+        medicalRecord.setVisit_date(LocalDate.parse(medicalRecordRequestDTO.getVisit_date()));
+        medicalRecord.setDiagnosis(medicalRecordRequestDTO.getDiagnosis());
+        medicalRecord.setTreatment(medicalRecordRequestDTO.getTreatment());
+        medicalRecord.setNote(medicalRecordRequestDTO.getNote());
         MedicalRecord updatedMedicalRecord = medicalRecordRepository.save(medicalRecord);
-
         MedicalRecordReponseDTO result = MedicalRecordReponseDTO.builder()
                 .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
                 .Note(updatedMedicalRecord.getNote())
@@ -245,6 +247,33 @@ public class MedicalRecordImpl implements MedicalRecordService {
             throw new IllegalArgumentException("Medical record not found with ID: " + id);
         }
         medicalRecordRepository.delete(medicalRecord);
+    }
+
+    @Override
+    public MedicalRecordDetailResponseDTO getMedicalRecordDetail(Long id) {
+        log.info("Getting medical record detail with ID: {}", id);
+        if (id == null) {
+            log.error("Medical record ID cannot be null");
+            throw new IllegalArgumentException("Medical record ID cannot be null");
+        }
+        MedicalRecord medicalRecord = medicalRecordRepository.findById(id).orElse(null);
+        if (medicalRecord == null) {
+            log.error("Medical record not found with ID: {}", id);
+            throw new IllegalArgumentException("Medical record not found with ID: " + id);
+        }
+        MedicalRecordDetailResponseDTO result = MedicalRecordDetailResponseDTO.builder()
+                .id(medicalRecord.getId())
+                .patient_id(medicalRecord.getPatient_id().getID())
+                .doctor_id(medicalRecord.getDoctor_id().getId())
+                .patient_Name(medicalRecord.getPatient_id().getFull_Name())
+                .doctor_Name(medicalRecord.getDoctor_id().getFull_name())
+                .diagnosis(medicalRecord.getDiagnosis())
+                .treatment(medicalRecord.getTreatment())
+                .status(medicalRecord.getStatus().toString())
+                .visit_date(String.valueOf(medicalRecord.getVisit_date()))
+                .Note(medicalRecord.getNote())
+                .build();
+        return result;
     }
 
 
