@@ -1,0 +1,49 @@
+<app-home-header></app-home-header>
+<!-- admin.component.html -->
+<div class="admin-container">
+    <!-- Header -->
+    <div class="header">
+        <h1>Hệ thống quản lý dành cho quản trị viên</h1>
+    </div>
+
+    <div class="main-content">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul class="menu">
+                <li>
+                    <div class="menu-item" [class.active]="activeTab === 'user'" (click)="setActiveTab('user')">
+                        <i class="icon-user-md"></i>
+                        Quản lý Tài khoản
+                    </div>
+                </li>
+                <li>
+                    <div class="menu-item" [class.active]="activeTab === 'doctor'" (click)="setActiveTab('doctor')">
+                        <i class="icon-user-md"></i>
+                        Quản lý bác sĩ
+                    </div>
+                </li>
+                <li>
+                    <div class="menu-item" [class.active]="activeTab === 'patient'" (click)="setActiveTab('patient')">
+                        <i class="icon-users"></i>
+                        Quản lý bệnh nhân
+                    </div>
+                </li>
+                <li>
+                    <div class="menu-item" [class.active]="activeTab === 'medical-records'"
+                        (click)="setActiveTab('medical-records')">
+                        <i class="icon-file-medical"></i>
+                        Quản lý bệnh án
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <app-user *ngIf="activeTab === 'user'"></app-user>
+           <app-doctor *ngIf="activeTab === 'doctor'"></app-doctor>
+           <app-patient *ngIf="activeTab === 'patient'"></app-patient>
+           <app-medicalrecord *ngIf="activeTab === 'medical-records'"></app-medicalrecord>
+        </div>
+    </div>
+    </div>

@@ -19,12 +19,9 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Lo
     @Query("SELECT mr FROM MedicalRecord mr WHERE mr.doctor_id.id = :doctorId")
     Page<MedicalRecord> findByDoctor_id_Id(Long doctorId, Pageable pageable);
 
-
     //lay tên bệnh nhân từ medical record
 //   @Query("SELECT mr FROM MedicalRecord mr WHERE mr.id = :medicalRecordId")
 //    ResponseData<String> getPatientNameByMedicalRecordId(Long medicalRecordId, Pageable pageable);
-
-
 
 
 }

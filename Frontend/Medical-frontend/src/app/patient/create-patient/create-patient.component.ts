@@ -201,7 +201,7 @@ export class CreatePatientComponent {
     }
 
     this.resetForm();
-    this.router.navigate(['/patients']);
+    this.router.navigate(['/admin']);
   }
 
   // Check if form has unsaved changes

@@ -20,29 +20,28 @@ export class DoctorEditComponent implements OnInit {
 
   // Doctor status options
   statusOptions = [
-    { value: 'ACTIVE', label: 'Active' },
-    { value: 'INACTIVE', label: 'Inactive' },
-    { value: 'SUSPENDED', label: 'Suspended' }
+    { value: 'ACTIVE', label: 'Hoạt động' },
+    { value: 'INACTIVE', label: 'Không hoạt động' },
+    { value: 'PENDING', label: 'Chờ duyệt' }
   ];
 
   // Medical specialties
   specialtyOptions = [
-    'Cardiology',
-    'Dermatology',
-    'Emergency Medicine',
-    'Family Medicine',
-    'Gastroenterology',
-    'General Surgery',
-    'Internal Medicine',
-    'Neurology',
-    'Obstetrics and Gynecology',
-    'Oncology',
-    'Ophthalmology',
-    'Orthopedics',
-    'Pediatrics',
-    'Psychiatry',
-    'Radiology',
-    'Urology'
+    'Nội khoa',
+    'Ngoại khoa',
+    'Sản phụ khoa',
+    'Nhi khoa',
+    'Tim mạch',
+    'Thần kinh',
+    'Da liễu',
+    'Mắt',
+    'Tai Mũi Họng',
+    'Răng Hàm Mặt',
+    'Chấn thương chỉnh hình',
+    'Tâm thần',
+    'Ung bướu',
+    'Hồi sức cấp cứu',
+    'Khác'
   ];
 
   constructor(
@@ -176,7 +175,7 @@ export class DoctorEditComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/doctor']);
+    this.router.navigate(['/admin']);
   }
 
   onReset(): void {

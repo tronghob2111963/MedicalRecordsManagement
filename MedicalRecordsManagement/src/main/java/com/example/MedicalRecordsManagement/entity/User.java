@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+
 
 
 @Setter
@@ -32,10 +32,6 @@ public class User implements UserDetails, Serializable {
     @Column(length = 255, nullable = false)
     private String password;
 
-    @Column(length = 100, nullable = false)
-    private Integer doctor_id;
-
-
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private UserRole role;
@@ -48,7 +44,6 @@ public class User implements UserDetails, Serializable {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name().toUpperCase()));
-//        return List.of();
     }
 
 

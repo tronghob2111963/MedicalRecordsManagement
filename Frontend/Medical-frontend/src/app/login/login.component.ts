@@ -73,7 +73,7 @@ export class LoginComponent {
     console.log('Redirecting based on role:', role);
     switch (role) {
       case 'ADMIN':
-        this.router.navigate(['/medical-records']);
+        this.router.navigate(['/admin']);
         break;
       case 'DOCTOR':
         this.router.navigate(['/patient']);

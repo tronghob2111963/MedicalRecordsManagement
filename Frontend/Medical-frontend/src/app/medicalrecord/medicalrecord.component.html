@@ -1,18 +1,29 @@
 <div class="medical-records-container">
     <!-- Header -->
     <div class="header">
-        <h1 class="page-title">Medical Records</h1>
-        <button class="refresh-btn" (click)="refresh()" [disabled]="loading">
-            <i class="refresh-icon">↻</i>
-            Refresh
-        </button>
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Medical Records</h1>
+                <p class="page-subtitle">Manage and view patient medical records</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline refresh-btn" (click)="refresh()" [disabled]="loading">
+                    <span class="btn-icon">↻</span>
+                    Refresh
+                </button>
+                <button class="btn btn-primary add-btn" (click)="createMedicalRecord()">
+                    <span class="btn-icon">+</span>
+                    Add New Record
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Controls -->
     <div class="controls">
         <div class="control-group">
-            <label for="sortSelect">Sort by:</label>
-            <select id="sortSelect" [(ngModel)]="sortBy" (change)="onSortChange()" class="sort-select">
+            <label for="sortSelect">Sort by</label>
+            <select id="sortSelect" [(ngModel)]="sortBy" (change)="onSortChange()">
                 <option *ngFor="let option of sortOptions" [value]="option.value">
                     {{ option.label }}
                 </option>
@@ -20,8 +31,8 @@
         </div>
 
         <div class="control-group">
-            <label for="pageSizeSelect">Items per page:</label>
-            <select id="pageSizeSelect" [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="page-size-select">
+            <label for="pageSizeSelect">Items per page</label>
+            <select id="pageSizeSelect" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
                 <option *ngFor="let size of pageSizeOptions" [value]="size">
                     {{ size }}
                 </option>
@@ -29,68 +40,70 @@
         </div>
     </div>
 
-    <!-- Loading Spinner -->
+    <!-- Loading State -->
     <div *ngIf="loading" class="loading-container">
         <div class="spinner"></div>
         <p>Loading medical records...</p>
     </div>
 
-    <!-- Error Message -->
+    <!-- Error State -->
     <div *ngIf="error && !loading" class="error-container">
-        <div class="error-message">
-            <i class="error-icon">⚠</i>
-            <span>{{ error }}</span>
+        <div class="error-card">
+            <p class="error-message">{{ error }}</p>
+            <button class="btn btn-primary" (click)="refresh()">Try Again</button>
         </div>
-        <button class="retry-btn" (click)="refresh()">Try Again</button>
     </div>
 
     <!-- Medical Records Table -->
-    <div *ngIf="!loading && !error" class="table-container">
-        <table class="medical-records-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Patient Name</th>
-                    <th>Doctor Name</th>
-                    <th>Status</th>
-                    <th>Note</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let record of medicalRecords" class="table-row">
-                    <td class="id-cell">{{ record.id }}</td>
-                    <td class="patient-cell">
-                        <div class="patient-info">
-                            <strong>{{ record.patient_Name }}</strong>
-                        </div>
-                    </td>
-                    <td class="doctor-cell">
-                        <div class="doctor-info">
-                            <strong>{{ record.doctor_Name }}</strong>
-                        </div>
-                    </td>
-                    <td class="status-cell">
-                        <span class="status-badge" [ngClass]="getStatusBadgeClass(record.status)">
-                            {{ formatStatus(record.status) }}
-                        </span>
-                    </td>
-                    <td class="note-cell">
-                       <strong>{{ record.note }}</strong>
-                    </td>
-                    <td class="actions-cell">
-                        <button class="action-btn view-btn" (click)=" viewMedicalDetail(record.id)">View</button>
-                        <button class="action-btn edit-btn" (click)="editMedicalRecord(record.id)">Edit</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div *ngIf="!loading && !error" class="table-section">
+        <div class="table-info">
+            <span>Showing {{ getRangeText() }}</span>
+        </div>
 
-        <!-- Empty State -->
-        <div *ngIf="medicalRecords.length === 0" class="empty-state">
-            <div class="empty-icon">📋</div>
-            <h3>No Medical Records Found</h3>
-            <p>There are no medical records to display at the moment.</p>
+        <div class="table-container">
+            <table class="medical-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient Name</th>
+                        <th>Doctor Name</th>
+                        <th>Status</th>
+                        <th>Note</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let record of medicalRecords">
+                        <td class="id-cell">#{{ record.id }}</td>
+                        <td class="name-cell">{{ record.patient_Name }}</td>
+                        <td class="name-cell">{{ record.doctor_Name }}</td>
+                        <td>
+                            <span class="status-badge" [ngClass]="getStatusBadgeClass(record.status)">
+                                {{ formatStatus(record.status) }}
+                            </span>
+                        </td>
+                        <td class="note-cell" [title]="record.note">{{ record.note }}</td>
+                        <td class="actions-cell">
+                            <button class="action-btn view-btn" (click)="viewMedicalDetail(record.id)">
+                                View
+                            </button>
+                            <button class="action-btn edit-btn" (click)="editMedicalRecord(record.id)">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Empty State -->
+            <div *ngIf="medicalRecords.length === 0" class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>No Medical Records Found</h3>
+                <p>There are no medical records to display.</p>
+                <button class="btn btn-primary" (click)="createMedicalRecord()">
+                    Create New Record
+                </button>
+            </div>
         </div>
     </div>
 
@@ -102,38 +115,37 @@
 
         <div class="pagination">
             <!-- Previous Button -->
-            <button class="pagination-btn" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+            <button class="page-btn" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
                 ‹
             </button>
 
             <!-- First Page -->
-            <button *ngIf="getPages()[0] > 1" class="pagination-btn" (click)="onPageChange(1)">
+            <button *ngIf="getPages()[0] > 1" class="page-btn" (click)="onPageChange(1)">
                 1
             </button>
 
             <!-- Ellipsis before -->
-            <span *ngIf="getPages()[0] > 2" class="pagination-ellipsis">...</span>
+            <span *ngIf="getPages()[0] > 2" class="page-ellipsis">...</span>
 
             <!-- Page Numbers -->
-            <button *ngFor="let page of getPages()" class="pagination-btn" [class.active]="page === currentPage"
+            <button *ngFor="let page of getPages()" class="page-btn" [class.active]="page === currentPage"
                 (click)="onPageChange(page)">
                 {{ page }}
             </button>
 
             <!-- Ellipsis after -->
-            <span *ngIf="getPages()[getPages().length - 1] < totalPages - 1" class="pagination-ellipsis">...</span>
+            <span *ngIf="getPages()[getPages().length - 1] < totalPages - 1" class="page-ellipsis">...</span>
 
             <!-- Last Page -->
-            <button *ngIf="getPages()[getPages().length - 1] < totalPages" class="pagination-btn"
+            <button *ngIf="getPages()[getPages().length - 1] < totalPages" class="page-btn"
                 (click)="onPageChange(totalPages)">
                 {{ totalPages }}
             </button>
 
             <!-- Next Button -->
-            <button class="pagination-btn" [disabled]="currentPage === totalPages"
-                (click)="onPageChange(currentPage + 1)">
+            <button class="page-btn" [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
                 ›
             </button>
         </div>
     </div>
-    </div>
+</div>

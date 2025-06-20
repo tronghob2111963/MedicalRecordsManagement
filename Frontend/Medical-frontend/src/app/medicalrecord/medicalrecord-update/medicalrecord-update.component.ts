@@ -171,7 +171,7 @@ export class MedicalrecordUpdateComponent implements OnInit {
    * Navigate back to medical records list
    */
   goBack(): void {
-    this.router.navigate(['/medical-records']);
+    this.router.navigate(['/admin']);
   }
 
   /**

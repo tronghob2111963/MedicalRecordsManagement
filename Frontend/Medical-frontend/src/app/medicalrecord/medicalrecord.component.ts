@@ -88,6 +88,9 @@ export class MedicalrecordComponent implements OnInit {
   editMedicalRecord(id: number): void {
     this.router.navigate(['/update-medical-record', id]);
   }
+  createMedicalRecord(): void {
+    this.router.navigate(['/create-medical-record']);
+  }
 
   /**
    * Handle page size change

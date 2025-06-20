@@ -5,8 +5,11 @@ import com.example.MedicalRecordsManagement.dto.request.UserPasswordRequest;
 import com.example.MedicalRecordsManagement.dto.response.PageResponse;
 import com.example.MedicalRecordsManagement.dto.response.UserResponseDTO;
 import com.example.MedicalRecordsManagement.entity.User;
+import com.example.MedicalRecordsManagement.repository.DoctorRepository;
 import com.example.MedicalRecordsManagement.repository.UserRepository;
+import com.example.MedicalRecordsManagement.service.MailService;
 import com.example.MedicalRecordsManagement.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,6 +34,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DoctorRepository doctorRepository;
+    private final MailService mailService;
 
     @Override
     public PageResponse<?> getAllUser(int pageNo, int pageSize, String sortBy) {
@@ -50,8 +56,8 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = PageRequest.of(p, pageSize, Sort.by(sorts));
         Page<User> users = userRepository.findAll(pageable);
         List<UserResponseDTO> userResponses = users.stream().map(user -> UserResponseDTO.builder()
+                .id(Long.valueOf(user.getId()))
                 .username(user.getUsername())
-                .password(user.getPassword())
                 .role(String.valueOf(user.getRole()))
                 .build()).toList();
         return PageResponse.builder()
@@ -72,39 +78,69 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("User not found");
         }
        return UserResponseDTO.builder()
+               .id(Long.valueOf(user.getId()))
                 .username(user.getUsername())
-                .password(user.getPassword())
                 .role(String.valueOf(user.getRole()))
                 .build();
     }
 
+
+
+    // Create user with username, password, role and send email to user to confirm
     @Override
     public long save(UserCreationRequest req) {
         log.info("Saving user with username: {}", req.getUsername());
         User userByUsername = userRepository.findByUsername(req.getUsername());
+
+        // Check if user with username already exists
         if (userByUsername != null) {
             log.error("User with username {} already exists", req.getUsername());
             throw new IllegalArgumentException("User with this username already exists");
         }
+
         User user = new User();
         user.setUsername(req.getUsername());
+        String rawPassword = req.getPassword();
         user.setPassword(passwordEncoder.encode(req.getPassword()));
-        user.setDoctor_id(req.getDoctor_id());
         user.setRole(req.getRole());
         userRepository.save(user);
+
+        //Pick up email from database by license number
+        String email  = doctorRepository.findEmailByLicenseNumber(user.getUsername());
+
+        //Check if email is not null
+        if (email != null && user.getId() != null) {
+            try {
+                log.info("Attempting to send confirmation email to: {}", email);
+
+                //gọi hàm sendEmailConfirm trong MailService
+                mailService.sendEmailConfirm(
+                        email,
+                        "Xác nhận tạo tài khoản",
+                        user.getUsername(),
+                        rawPassword
+                );
+                log.info("Confirmation email sent successfully to: {}", email);
+            } catch (MessagingException | UnsupportedEncodingException e) {
+                log.error("Failed to send confirmation email to {}: {}", email, e.getMessage());
+            }
+        } else {
+            log.warn("Email not sent. Email: {}, User ID: {}", email, user.getId());
+        }
         log.info("User with username {} saved successfully", req.getUsername());
         return user.getId();
     }
 
+
     @Override
-    public UserResponseDTO updateUer(Long id, UserCreationRequest req) {
+    public UserResponseDTO updateUser(Long id, UserCreationRequest req) {
         log.info("Updating user with id: {}", id);
         User user = userRepository.findById(Math.toIntExact(id)).orElse(null);
         if (user == null) {
             log.error("User with id {} not found", id);
             throw new IllegalArgumentException("User not found");
         }
-        user.setPassword(req.getPassword());
+        user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setRole(req.getRole());
         userRepository.save(user);
         log.info("User with id {} updated successfully", id);
@@ -113,11 +149,6 @@ public class UserServiceImpl implements UserService {
                 .password(user.getPassword())
                 .role(String.valueOf(user.getRole()))
                 .build();
-    }
-
-    @Override
-    public void changePassword(UserPasswordRequest req) {
-
     }
 
     @Override

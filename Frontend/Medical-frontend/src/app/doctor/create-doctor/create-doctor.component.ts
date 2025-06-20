@@ -70,7 +70,7 @@ export class CreateDoctorComponent implements OnInit {
         Validators.email,
         Validators.maxLength(100)
       ]],
-      license_Number: ['', [
+      license_number: ['', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50)
@@ -84,7 +84,7 @@ export class CreateDoctorComponent implements OnInit {
   get specialty() { return this.doctorForm.get('specialty'); }
   get phoneNumber() { return this.doctorForm.get('phone_number'); }
   get email() { return this.doctorForm.get('email'); }
-  get licenseNumber() { return this.doctorForm.get('license_Number'); }
+  get licenseNumber() { return this.doctorForm.get('license_number'); }
   get status() { return this.doctorForm.get('status'); }
 
   onSubmit(): void {
@@ -98,7 +98,7 @@ export class CreateDoctorComponent implements OnInit {
         specialty: this.doctorForm.value.specialty,
         phone_number: this.doctorForm.value.phone_number.trim(),
         email: this.doctorForm.value.email.trim().toLowerCase(),
-        license_Number: this.doctorForm.value.license_Number.trim(),
+        license_number: this.doctorForm.value.license_number.trim(),
         status: this.doctorForm.value.status
       };
 
@@ -107,18 +107,18 @@ export class CreateDoctorComponent implements OnInit {
           this.isSubmitting = false;
           this.successMessage = 'Tạo bác sĩ thành công!';
           console.log('Doctor created successfully:', response);
-          
+
           // Reset form sau 2 giây và chuyển về danh sách
           setTimeout(() => {
             this.doctorForm.reset();
             this.doctorForm.patchValue({ status: 'ACTIVE' });
-            this.router.navigate(['/doctors']); // Adjust route as needed
+            this.router.navigate(['/create-user']); // Adjust route as needed
           }, 2000);
         },
         error: (error) => {
           this.isSubmitting = false;
           console.error('Error creating doctor:', error);
-          
+
           if (error.error && error.error.message) {
             this.errorMessage = error.error.message;
           } else if (error.status === 401) {
@@ -153,7 +153,7 @@ export class CreateDoctorComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/doctors']); // Adjust route as needed
+    this.router.navigate(['/admin']); // Adjust route as needed
   }
 
   // Helper method để hiển thị lỗi validation
@@ -175,7 +175,7 @@ export class CreateDoctorComponent implements OnInit {
       'specialty': 'Chuyên khoa',
       'phone_number': 'Số điện thoại',
       'email': 'Email',
-      'license_Number': 'Số giấy phép',
+      'license_number': 'Số giấy phép',
       'status': 'Trạng thái'
     };
     return labels[fieldName] || fieldName;

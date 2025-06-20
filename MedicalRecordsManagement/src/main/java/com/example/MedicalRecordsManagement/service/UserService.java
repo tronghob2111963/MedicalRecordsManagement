@@ -14,9 +14,7 @@ public interface UserService {
 
     long save(UserCreationRequest req);
 
-    UserResponseDTO updateUer(Long id, UserCreationRequest req);
-
-    void changePassword(UserPasswordRequest req);
+    UserResponseDTO updateUser(Long id, UserCreationRequest req);
 
     void delete(Long id);
 }

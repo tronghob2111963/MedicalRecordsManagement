@@ -11,8 +11,5 @@ import lombok.ToString;
 public class UserCreationRequest {
     private String username;
     private String password;
-    private Integer doctor_id;
     private UserRole role;
-
-
 }

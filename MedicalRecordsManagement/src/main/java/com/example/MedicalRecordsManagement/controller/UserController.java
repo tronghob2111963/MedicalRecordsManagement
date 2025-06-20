@@ -74,7 +74,7 @@ public class UserController {
         log.info("Updating user with id: {}", id);
         try {
             return new ResponseData<>(HttpStatus.OK.value(), "Success",
-                    userService.updateUer(id, request));
+                    userService.updateUser(id, request));
         } catch (Exception e) {
             log.error("Error updating user: {}", e.getMessage());
             return new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error updating user: " + e.getMessage());
@@ -91,6 +91,20 @@ public class UserController {
         } catch (Exception e) {
             log.error("Error fetching user: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Delete user by id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseData<?> delete(@PathVariable Long id) {
+        log.info("Deleting user with id: {}", id);
+        try {
+            userService.delete(id);
+            return new ResponseData<>(HttpStatus.OK.value(), "Success", "User deleted successfully");
+        } catch (Exception e) {
+            log.error("Error deleting user: {}", e.getMessage());
+            return new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error deleting user: " + e.getMessage());
         }
     }
 }

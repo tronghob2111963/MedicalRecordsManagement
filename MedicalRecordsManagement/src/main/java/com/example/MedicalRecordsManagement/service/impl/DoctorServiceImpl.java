@@ -48,11 +48,11 @@ public class DoctorServiceImpl implements DoctorService {
         List<DoctorResponseDTO>  doctorResponse = doctors.stream().map(
                 Doctor -> DoctorResponseDTO.builder()
                         .id(Doctor.getId())
-                        .full_name(Doctor.getFull_name())
+                        .full_name(Doctor.getFullName())
                         .specialty(Doctor.getSpecialty())
                         .phone_number(Doctor.getPhone_number())
                         .email(Doctor.getEmail())
-                        .license_Number(Doctor.getLicense_Number())
+                        .license_Number(Doctor.getLicenseNumber())
                         .status(Doctor.getStatus())
                         .build()
         ).toList();
@@ -76,11 +76,11 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = doctorRepository.findById(id).orElse(null);
         return DoctorResponseDTO.builder()
                 .id(doctor.getId())
-                .full_name(doctor.getFull_name())
+                .full_name(doctor.getFullName())
                 .email(doctor.getEmail())
                 .phone_number(doctor.getPhone_number())
                 .specialty(doctor.getSpecialty())
-                .license_Number(doctor.getLicense_Number())
+                .license_Number(doctor.getLicenseNumber())
                 .status(doctor.getStatus())
                 .build();
     }
@@ -92,26 +92,26 @@ public class DoctorServiceImpl implements DoctorService {
             log.error("Doctor DTO cannot be null");
             throw new RuntimeException("Doctor DTO cannot be null");
         }
-        if(doctorRepository.existsBylicense_Number(doctorDTO.getLicense_number())){
-            log.error("Doctor with license number {} already exists", doctorDTO.getLicense_number());
-            throw new RuntimeException("Doctor with license number " + doctorDTO.getLicense_number() + " already exists");
+        if(doctorRepository.existsByLicenseNumber(doctorDTO.getLicenseNumber())){
+            log.error("Doctor with license number {} already exists", doctorDTO.getLicenseNumber());
+            throw new RuntimeException("Doctor with license number " + doctorDTO.getLicenseNumber() + " already exists");
 
         }
         Doctor doctor = Doctor.builder()
-                .full_name(doctorDTO.getFull_name())
+                .fullName(doctorDTO.getFull_name())
                 .specialty(doctorDTO.getSpecialty())
                 .phone_number(doctorDTO.getPhone_number())
                 .email(doctorDTO.getEmail())
-                .license_Number(doctorDTO.getLicense_number())
+                .licenseNumber(doctorDTO.getLicenseNumber())
                 .status(doctorDTO.getStatus())
                 .build();
         doctorRepository.save(doctor);
         return DoctorResponseDTO.builder()
-                .full_name(doctor.getFull_name())
+                .full_name(doctor.getFullName())
                 .email(doctor.getEmail())
                 .phone_number(doctor.getPhone_number())
                 .specialty(doctor.getSpecialty())
-                .license_Number(doctor.getLicense_Number())
+                .license_Number(doctor.getLicenseNumber())
                 .status(doctor.getStatus())
                 .build();
 
@@ -134,7 +134,7 @@ public class DoctorServiceImpl implements DoctorService {
         }
 
         //set thông tin cho doctor
-        doctor.setFull_name(doctorDTO.getFull_name());
+        doctor.setFullName(doctorDTO.getFull_name());
         doctor.setSpecialty(doctorDTO.getSpecialty());
         doctor.setPhone_number(doctorDTO.getPhone_number());
         doctor.setEmail(doctorDTO.getEmail());
@@ -142,7 +142,7 @@ public class DoctorServiceImpl implements DoctorService {
         doctorRepository.save(doctor);
 
         return DoctorResponseDTO.builder()
-                .full_name(doctor.getFull_name())
+                .full_name(doctor.getFullName())
                 .email(doctor.getEmail())
                 .phone_number(doctor.getPhone_number())
                 .specialty(doctor.getSpecialty())

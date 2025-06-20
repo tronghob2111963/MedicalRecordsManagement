@@ -1,0 +1,158 @@
+<div class="user-container">
+    <!-- Header Section -->
+<!-- Header Section -->
+<div class="header-section">
+    <h2>User Management</h2>
+    <div class="header-buttons">
+        <button class="btn btn-add" (click)="createUser()">
+            <i class="icon-plus"></i>
+            Add User
+        </button>
+        <button class="btn btn-refresh" (click)="refresh()" [disabled]="isLoading">
+            <i class="icon-refresh"></i>
+            Refresh
+        </button>
+    </div>
+</div>
+
+
+    <!-- Controls Section -->
+    <div class="controls-section">
+        <div class="sort-controls">
+            <label for="sortBy">Sort by:</label>
+            <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" class="form-select">
+                <option value="id:asc">ID (Ascending)</option>
+                <option value="id:desc">ID (Descending)</option>
+                <option value="username:asc">Username (A-Z)</option>
+                <option value="username:desc">Username (Z-A)</option>
+                <option value="role:asc">Role (A-Z)</option>
+                <option value="role:desc">Role (Z-A)</option>
+            </select>
+        </div>
+
+        <div class="page-size-controls">
+            <label for="pageSize">Items per page:</label>
+            <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="form-select">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading users...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage && !isLoading" class="error-container">
+        <div class="error-message">
+            <i class="icon-error"></i>
+            {{ errorMessage }}
+        </div>
+        <button class="btn btn-retry" (click)="refresh()">Try Again</button>
+    </div>
+
+    <!-- Users Table -->
+    <div *ngIf="!isLoading && !errorMessage" class="table-container">
+        <!-- Table Info -->
+        <div class="table-info">
+            <p>
+                Showing {{ users.length }} of {{ totalElements }} users
+                (Page {{ currentPage }} of {{ totalPages }})
+            </p>
+        </div>
+
+        <!-- Table -->
+        <table class="users-table" *ngIf="users.length > 0">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of users; let i = index" class="table-row">
+                    <td class="username-cell">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                {{ user.username.charAt(0).toUpperCase() }}
+                            </div>
+                            <span class="username">{{ user.username }}</span>
+                        </div>
+                    </td>
+                    <td class="role-cell">
+                        <span class="role-badge" [ngClass]="'role-' + user.role.toLowerCase()">
+                            {{ user.role }}
+                        </span>
+                    </td>
+                    <td class="actions-cell">
+                        <button class="btn btn-sm btn-view" title="View Details">
+                            <i class="icon-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-edit" title="Edit User">
+                            <i class="icon-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-delete"(click)="deleteUser(user.id)" title="Delete User">
+                            <i class="icon-delete"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div *ngIf="users.length === 0" class="empty-state">
+            <div class="empty-icon">👥</div>
+            <h3>No users found</h3>
+            <p>There are no users to display at the moment.</p>
+            <button class="btn btn-primary" (click)="refresh()">Refresh</button>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && !errorMessage && totalPages > 1" class="pagination-container">
+        <div class="pagination">
+            <!-- First Page -->
+            <button class="btn btn-page" (click)="onPageChange(1)" [disabled]="currentPage === 1" title="First Page">
+                <i class="icon-first"></i>
+            </button>
+
+            <!-- Previous Page -->
+            <button class="btn btn-page" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
+                title="Previous Page">
+                <i class="icon-prev"></i>
+            </button>
+
+            <!-- Page Numbers -->
+            <button *ngFor="let page of getPageNumbers()" class="btn btn-page" [class.active]="page === currentPage"
+                (click)="onPageChange(page)">
+                {{ page }}
+            </button>
+
+            <!-- Next Page -->
+            <button class="btn btn-page" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages"
+                title="Next Page">
+                <i class="icon-next"></i>
+            </button>
+
+            <!-- Last Page -->
+            <button class="btn btn-page" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages"
+                title="Last Page">
+                <i class="icon-last"></i>
+            </button>
+        </div>
+
+        <!-- Pagination Info -->
+        <div class="pagination-info">
+            <span>
+                Page {{ currentPage }} of {{ totalPages }}
+                ({{ totalElements }} total items)
+            </span>
+        </div>
+    </div>
+    </div>

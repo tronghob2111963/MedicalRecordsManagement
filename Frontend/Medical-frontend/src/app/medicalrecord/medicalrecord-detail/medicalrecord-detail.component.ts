@@ -80,7 +80,7 @@ export class MedicalrecordDetailComponent implements OnInit {
         next: (response) => {
           if (this.medicalRecordService.isSuccessResponse(response)) {
             alert('Xóa bệnh án thành công');
-            this.router.navigate(['/medical-records']);
+            this.router.navigate(['/admin']);
           } else {
             this.error = this.medicalRecordService.getErrorMessage(response);
           }
@@ -96,7 +96,7 @@ export class MedicalrecordDetailComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/medical-records']);
+    this.router.navigate(['/admin']);
   }
 
   viewDoctorDetail(doctorId: number | undefined): void {

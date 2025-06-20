@@ -8,7 +8,7 @@ export interface DoctorRequestDTO {
   specialty: string;
   phone_number: string;
   email: string;
-  license_Number: string;
+  license_number: string;
   status: string;
 }
 

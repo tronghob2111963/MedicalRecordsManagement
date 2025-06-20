@@ -54,7 +54,7 @@ export interface ResponseData<T> {
   providedIn: 'root'
 })
 export class MedicalrecordService {
-  private readonly baseUrl = 'http://localhost:8080/medical-records'; // Adjust base URL as needed
+  private readonly baseUrl = 'http://localhost:8081/medical-records'; // Adjust base URL as needed
 
   constructor(private http: HttpClient) { }
 

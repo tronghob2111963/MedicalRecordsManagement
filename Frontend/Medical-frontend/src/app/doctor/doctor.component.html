@@ -16,9 +16,7 @@
             </button>
 
             <!-- Nút Thêm bác sĩ -->
-            <button
-                class="btn btn-refresh"
-                [routerLink]="['/create-doctor']">
+            <button class="btn btn-refresh" [routerLink]="['/create-doctor']">
                 <span class="text-lg">➕</span>
                 <span class="font-medium">Thêm bác sĩ</span>
             </button>
@@ -117,14 +115,6 @@
                             title="Xem chi tiết" (click)="viewDoctorDetail(doctor.id)">
                             👁️ Chi tiết
                         </button>
-
-                        <!-- Hoặc sử dụng routerLink trực tiếp -->
-                        <!-- <a [routerLink]="['/doctor-detail', doctor.id]"
-                           class="btn-action btn-view bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors inline-flex items-center"
-                           title="Xem chi tiết">
-                            👁️ Chi tiết
-                        </a> -->
-
                         <button
                             class="btn-action btn-edit bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 transition-colors"
                             title="Chỉnh sửa thông tin" (click)="editDoctor(doctor.id)">

@@ -117,6 +117,6 @@ export class MedicalrecordCreateComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/medical-records']);
+    this.router.navigate(['/admin']);
   }
 }

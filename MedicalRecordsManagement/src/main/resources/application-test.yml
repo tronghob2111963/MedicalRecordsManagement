@@ -1,0 +1,32 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://localhost:3306/MedicalRecord_test
+    username: root
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: trongho.373664@gmail.com
+    password: xkdilnwbrtoymeyu  # Thay bằng App Password của Gmail
+    from: trongho.373664@gmail.com       # Thêm thuộc tính spring.mail.from
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+server:
+  port: 8082
+  
+  
