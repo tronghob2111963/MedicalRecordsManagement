@@ -25,6 +25,8 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+  kafka:
+    bootstrap-servers: localhost:29092
 
 server:
   port: 8082

@@ -14,7 +14,7 @@ export interface UserResponseDTO {
 export interface UserCreationRequest {
   username: string;
   password: string;
-  doctor_id?: number;
+  doctorId?: number;
   role: string;
 }
 
@@ -194,100 +194,3 @@ export class UserService {
     return this.getAllUsers(pageNo, pageSize, sortBy);
   }
 }
-
-// import { Injectable } from '@angular/core';
-// import { environment } from '../enviroments/enviroment';
-// import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-// import { Observable } from 'rxjs';
-
-
-
-// export interface UserResponseDTO {
-//   username: string;
-//   role: string;
-// }
-
-// // Interface cho User Creation Request
-// export interface UserCreationRequest {
-//   username: string;
-//   password: string;
-//   role: string;
-// }
-
-// // Interface cho User Entity (từ backend)
-// export interface User {
-//   id: number;
-//   username: string;
-//   password?: string; // Optional vì thường không trả về password
-//   role: string;
-//   createdAt?: string;
-//   updatedAt?: string;
-// }
-
-
-
-// // private String username;
-// // private String password;
-// // private String role;
-// export interface PageResponse<T> {
-//   pageNo: number;
-//   pageSize: number;
-//   totalElements: number;
-//   totalPages: number;
-//   items: T[];
-// }
-
-// // Interface cho Response Data
-// export interface ResponseData<T> {
-//   status: number;
-//   message: string;
-//   data: T;
-// }
-
-// export interface ResponseError {
-//   status: number;
-//   message: string;
-// }
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class UserService {
-//   private apiUrl = `${environment.apiUrl}/user`;
-
-//   constructor(private http: HttpClient) { }
-
-//   private minTokenLength = 13;
-
-//   private createHeaders(): HttpHeaders {
-//     const token = localStorage.getItem('accessToken');
-//     console.log('Token:', token);
-//     return new HttpHeaders({
-//       'Content-Type': 'application/json',
-//       'Authorization': token ? `Bearer ${token}` : ''
-//     });
-//   }
-//   private get apiConfig() {
-//     return {
-//       headers: this.createHeaders(),
-//       withCredentials: true,
-//     };
-//   }
-
-//   getAllUsers(pageNo: number = 1, pageSize: number = 10, sortBy: string = 'Id:asc'): Observable<ResponseData<PageResponse<UserResponseDTO>>> {
-//     const params = new HttpParams()
-//       .set('pageNo', pageNo.toString())
-//       .set('pageSize', pageSize.toString())
-//       .set('sortBy', sortBy);
-//       return this.http.get<ResponseData<PageResponse<UserResponseDTO>>>(
-//         `${this.apiUrl}/get-all-users`,
-//         {
-//           ...this.apiConfig,
-//           params
-//         }
-//       );
-//   }
-
-
-
-// }

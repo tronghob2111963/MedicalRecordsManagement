@@ -5,7 +5,11 @@ import com.example.MedicalRecordsManagement.dto.response.ResponseData;
 import com.example.MedicalRecordsManagement.dto.response.ResponseError;
 import com.example.MedicalRecordsManagement.service.MailService;
 import jakarta.mail.MessagingException;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +24,11 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @Slf4j
 @RestController
 @RequestMapping("/common")
-public record CommonController(MailService mailService) {
+@RequiredArgsConstructor
+public class CommonController {
+
+    private  final MailService mailService;
+
 
     @PostMapping("/send-email")
     public ResponseData<?> sendEmail(@RequestParam String recipients, @RequestParam String subject,

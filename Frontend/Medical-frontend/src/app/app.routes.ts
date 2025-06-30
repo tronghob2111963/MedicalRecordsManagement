@@ -15,6 +15,10 @@ import { MedicalrecordUpdateComponent } from './medicalrecord/medicalrecord-upda
 import { MedicalrecordCreateComponent } from './medicalrecord/medicalrecord-create/medicalrecord-create.component';
 import { UserComponent } from './user/user.component';
 import { CreateUserComponent } from './user/create-user/create-user.component';
+import { UpdateUserComponent } from './user/update-user/update-user.component';
+import { DoctorMedicalRecordListComponent } from './medicalrecord/doctor-medical-record-list/doctor-medical-record-list.component';
+import { DoctorPageComponent } from './doctor-page/doctor-page.component';
+import { DoctorInfoComponent } from './doctor-page/doctor-info/doctor-info.component';
 
 export const routes: Routes = [
     // {path: '', component: HomeComponent},
@@ -34,4 +38,8 @@ export const routes: Routes = [
     {path: 'create-medical-record', component: MedicalrecordCreateComponent},
     {path: 'user', component: UserComponent},
     {path: 'create-user', component: CreateUserComponent},
+    {path: 'update-user/:id', component: UpdateUserComponent},
+    {path: 'medical-record-doctor-list', component: DoctorMedicalRecordListComponent},
+    {path:'doctor-page', component: DoctorPageComponent},
+    {path: 'doctor-info/:id', component: DoctorInfoComponent}
 ];

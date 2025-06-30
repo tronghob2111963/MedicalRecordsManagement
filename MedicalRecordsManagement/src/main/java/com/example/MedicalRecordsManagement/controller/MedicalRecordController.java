@@ -74,18 +74,18 @@ public class MedicalRecordController {
         }
     }
 
-    @GetMapping("/doctor-record/{doctor_id}")
+    @GetMapping("/doctor-record/")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseData<?> getMedicalRecordByDoctorId(
-            @RequestParam Long doctor_id,
-            @RequestParam(defaultValue = "1") int pageNo,
+            @RequestParam Long doctorId,
+            @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "doctor_id:asc") String sortBy
     ) {
-        log.info("Fetching medical record with Doctor ID: {}", doctor_id);
+        log.info("Fetching medical record with Doctor ID: {}", doctorId);
         try {
             return new ResponseData<>(HttpStatus.OK.value(), "Success",
-                    medicalRecordService.getMedicalRecordsByDoctorId(doctor_id, pageNo, pageSize, sortBy));
+                    medicalRecordService.getMedicalRecordsByDoctorId(doctorId, pageNo, pageSize, sortBy));
         } catch (Exception e) {
             log.error("Error fetching medical record: {}", e.getMessage());
             return new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching medical record: " + e.getMessage());

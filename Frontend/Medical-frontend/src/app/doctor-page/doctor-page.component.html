@@ -1,0 +1,38 @@
+<app-home-header></app-home-header>
+<!-- admin.component.html -->
+<div class="admin-container">
+
+
+    <div class="main-content">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul class="menu">
+
+                <li>
+                    <div class="menu-item" [class.active]="activeTab === 'doctor'" (click)="setActiveTab('doctor')">
+                        <i class="icon-user-md"></i>
+                       Thông tinbác sĩ
+                    </div>
+                </li>
+
+                <li>
+                    <div class="menu-item" [class.active]="activeTab === 'medical-records'"
+                        (click)="setActiveTab('medical-records')">
+                        <i class="icon-file-medical"></i>
+                        Quản lý bệnh án
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- <app-user *ngIf="activeTab === 'user'"></app-user>
+            <app-doctor *ngIf="activeTab === 'doctor'"></app-doctor>
+            <app-patient *ngIf="activeTab === 'patient'"></app-patient>
+            <app-medicalrecord *ngIf="activeTab === 'medical-records'"></app-medicalrecord> -->
+            <app-doctor-medical-record-list *ngIf="activeTab === 'medical-records'"></app-doctor-medical-record-list>
+            <app-doctor-info *ngIf="activeTab === 'doctor'"></app-doctor-info>
+        </div>
+    </div>
+</div>

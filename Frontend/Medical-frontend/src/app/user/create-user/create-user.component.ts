@@ -52,17 +52,6 @@ export class CreateUserComponent implements OnInit {
       validators: this.passwordMatchValidator
     });
 
-    // Cập nhật validator của doctorId nếu role là DOCTOR
-    this.createUserForm.get('role')?.valueChanges.subscribe(role => {
-      const doctorIdControl = this.createUserForm.get('doctorId');
-      if (role === 'DOCTOR') {
-        doctorIdControl?.setValidators([Validators.required]);
-      } else {
-        doctorIdControl?.clearValidators();
-        doctorIdControl?.setValue('');
-      }
-      doctorIdControl?.updateValueAndValidity();
-    });
   }
 
   private passwordMatchValidator(group: FormGroup) {
@@ -161,7 +150,7 @@ export class CreateUserComponent implements OnInit {
       username: formValue.username.trim(),
       password: formValue.password,
       role: formValue.role,
-      doctor_id: formValue.role === 'DOCTOR' ? formValue.doctorId?.trim() : undefined
+      doctorId: formValue.role === 'DOCTOR' ? formValue.doctorId?.trim() : undefined
     };
 
     this.userService.createUser(request).subscribe({

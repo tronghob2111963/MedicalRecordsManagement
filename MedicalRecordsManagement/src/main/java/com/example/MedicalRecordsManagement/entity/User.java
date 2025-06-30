@@ -36,6 +36,9 @@ public class User implements UserDetails, Serializable {
     @Column(length = 20, nullable = false)
     private UserRole role;
 
+    @Column(name = "doctor_id")
+    private Long doctorId;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt = LocalDateTime.now();

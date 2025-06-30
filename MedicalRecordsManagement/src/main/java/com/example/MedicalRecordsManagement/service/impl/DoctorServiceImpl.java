@@ -86,7 +86,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorResponseDTO createDoctor(DoctorRequestDTO doctorDTO) {
+    public Long createDoctor(DoctorRequestDTO doctorDTO) {
         log.info("Creating new doctor: {}", doctorDTO);
         if (doctorDTO == null) {
             log.error("Doctor DTO cannot be null");
@@ -106,15 +106,7 @@ public class DoctorServiceImpl implements DoctorService {
                 .status(doctorDTO.getStatus())
                 .build();
         doctorRepository.save(doctor);
-        return DoctorResponseDTO.builder()
-                .full_name(doctor.getFullName())
-                .email(doctor.getEmail())
-                .phone_number(doctor.getPhone_number())
-                .specialty(doctor.getSpecialty())
-                .license_Number(doctor.getLicenseNumber())
-                .status(doctor.getStatus())
-                .build();
-
+        return doctor.getId();
     }
 
     @Override

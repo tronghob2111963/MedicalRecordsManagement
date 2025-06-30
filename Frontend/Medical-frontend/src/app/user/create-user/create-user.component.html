@@ -51,7 +51,6 @@
             </select>
             <div *ngIf="isFieldInvalid('role')" class="error-message">{{ getFieldError('role') }}</div>
         </div>
-
         <!-- Doctor ID (chỉ hiển thị nếu là DOCTOR) -->
         <div class="form-group" *ngIf="createUserForm.get('role')?.value === 'DOCTOR'">
             <label for="doctorId" class="form-label">Mã bác sĩ <span class="required">*</span></label>

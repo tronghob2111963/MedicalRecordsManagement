@@ -91,10 +91,7 @@
                         </span>
                     </td>
                     <td class="actions-cell">
-                        <button class="btn btn-sm btn-view" title="View Details">
-                            <i class="icon-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-edit" title="Edit User">
+                        <button class="btn btn-sm btn-edit"(click)="editUser(user.id)" title="Edit User">
                             <i class="icon-edit"></i>
                         </button>
                         <button class="btn btn-sm btn-delete"(click)="deleteUser(user.id)" title="Delete User">

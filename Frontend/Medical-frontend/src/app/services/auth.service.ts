@@ -10,6 +10,7 @@ export interface TokenResponse {
   refreshToken: string; // Khớp với BE
   username: string;
   role: string;
+  doctorId?: number;
 }
 
 @Injectable({
@@ -69,6 +70,7 @@ export class AuthService {
     localStorage.setItem('refreshToken', tokenResponse.refreshToken);
     localStorage.setItem('role', tokenResponse.role);
     localStorage.setItem('username', username);
+    localStorage.setItem('doctorId', tokenResponse.doctorId?.toString() || '');
     console.log('Tokens saved successfully:', {
       accessToken: tokenResponse.accessToken.substring(0, 20) + '...',
       refreshToken: tokenResponse.refreshToken.substring(0, 20) + '...',
@@ -76,7 +78,7 @@ export class AuthService {
       username: username
     });
   }
-  
+
 
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
@@ -88,6 +90,10 @@ export class AuthService {
 
   getUsername(): string | null {
     return localStorage.getItem('username');
+  }
+  getDoctorId(): number | null {
+    const doctorId = localStorage.getItem('doctorId');
+    return doctorId ? parseInt(doctorId, 10) : null;
   }
 
   logout(): void {

@@ -98,15 +98,15 @@ export class CreateDoctorComponent implements OnInit {
         specialty: this.doctorForm.value.specialty,
         phone_number: this.doctorForm.value.phone_number.trim(),
         email: this.doctorForm.value.email.trim().toLowerCase(),
-        license_number: this.doctorForm.value.license_number.trim(),
+        licenseNumber: this.doctorForm.value.license_number.trim(),
         status: this.doctorForm.value.status
       };
 
       this.doctorService.createDoctor(doctorData).subscribe({
         next: (response) => {
           this.isSubmitting = false;
-          this.successMessage = 'Tạo bác sĩ thành công!';
-          console.log('Doctor created successfully:', response);
+          this.successMessage = 'Tạo bác sĩ thành công!' + response.data;
+          console.log('Doctor created successfully:', response.data);
 
           // Reset form sau 2 giây và chuyển về danh sách
           setTimeout(() => {

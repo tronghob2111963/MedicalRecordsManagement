@@ -7,6 +7,7 @@ import { DoctorComponent } from "../doctor/doctor.component";
 import { PatientComponent } from '../patient/patient.component';
 import { MedicalrecordComponent } from '../medicalrecord/medicalrecord.component';
 import { UserComponent } from "../user/user.component";
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-admin', // Đổi từ 'app-home' thành 'app-admin'
@@ -19,7 +20,7 @@ import { UserComponent } from "../user/user.component";
     DoctorComponent,
     PatientComponent,
     MedicalrecordComponent,
-    UserComponent
+    UserComponent,
 ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'

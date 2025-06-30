@@ -1,0 +1,121 @@
+<div class="medical-record-container">
+    <!-- Header -->
+    <div class="header">
+        <h2>Danh sách hồ sơ bệnh án</h2>
+        <div class="doctor-info" *ngIf="doctor_Name">
+            <span class="doctor-label">Bác sĩ:</span>
+            <span class="doctor-name">{{ doctor_Name }}</span>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="control-group">
+            <label for="pageSize">Hiển thị:</label>
+            <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="form-select">
+                <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }} bản ghi</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="sortBy">Sắp xếp theo:</label>
+            <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" class="form-select">
+                <option *ngFor="let option of sortOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
+        </div>
+
+        <button type="button" class="btn-refresh" (click)="refreshData()" [disabled]="isLoading">
+            <span *ngIf="!isLoading">🔄</span>
+            <span *ngIf="isLoading">⏳</span>
+            Làm mới
+        </button>
+
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="errorMessage && !isLoading" class="error-message">
+        <p>{{ errorMessage }}</p>
+        <button type="button" class="btn-retry" (click)="refreshData()">Thử lại</button>
+    </div>
+
+    <!-- Data table -->
+    <div *ngIf="!isLoading && !errorMessage" class="table-container">
+        <!-- Summary info -->
+        <div class="summary-info">
+            <p>Tổng số: <strong>{{ totalElements }}</strong> bản ghi |
+                Trang <strong>{{ currentPage }}</strong> / <strong>{{ totalPages }}</strong></p>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table class="medical-records-table" *ngIf="medicalRecords.length > 0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên bệnh nhân</th>
+                        <th>Tên bác sĩ</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let record of medicalRecords; trackBy: trackByRecordId">
+                        <td class="record-id">{{ record.id }}</td>
+                        <td class="patient-name">{{ record.patient_Name }}</td>
+                        <td class="doctor-name">{{ record.doctor_Name }}</td>
+                        <td class="status-cell">
+                            <span class="status-badge" [ngClass]="getStatusClass(record.status)">
+                                {{ getStatusDisplay(record.status) }}
+                            </span>
+                        </td>
+                        <td class="note-cell">
+                            <div class="note-content" [title]="record.note">
+                                {{ record.note | slice:0:50 }}
+                                <span *ngIf="record.note && record.note.length > 50">...</span>
+                            </div>
+                        </td>
+                        <td class="actions-cell">
+                            <button type="button" class="btn-view" title="Xem chi tiết" (click)="viewMedicalDetail(record.id)">
+                                👁️ Xem
+                            </button>
+                            <button type="button" class="btn-edit" title="Chỉnh sửa" (click)="editMedicalRecord(record.id)">
+                                ✏️ Sửa
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Empty state -->
+            <div *ngIf="medicalRecords.length === 0" class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>Không có hồ sơ bệnh án nào</h3>
+                <p>Bác sĩ này chưa có hồ sơ bệnh án nào được ghi nhận.</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="totalPages > 1">
+            <button type="button" class="btn-page" [disabled]="!hasPreviousPage()"
+                (click)="onPageChange(currentPage - 1)">
+                ‹ Trước
+            </button>
+
+            <button type="button" *ngFor="let page of getPageNumbers()" class="btn-page"
+                [class.active]="page === currentPage" (click)="onPageChange(page)">
+                {{ page }}
+            </button>
+
+            <button type="button" class="btn-page" [disabled]="!hasNextPage()" (click)="onPageChange(currentPage + 1)">
+                Sau ›
+            </button>
+        </div>
+    </div>
+    </div>

@@ -65,7 +65,7 @@ export class UserComponent implements OnInit {
   }
 
   editUser(Id: number): void {
-    this.router.navigate(['/edit-user', Id]);
+    this.router.navigate(['/update-user', Id]);
   }
 
   deleteUser(Id: number): void {

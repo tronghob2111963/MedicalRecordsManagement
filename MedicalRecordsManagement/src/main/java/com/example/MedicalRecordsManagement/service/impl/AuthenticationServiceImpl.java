@@ -66,6 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .RefreshToken(refreshToken)
                 .username(request.getUsername())
                 .role(userRole)
+                .doctorId(user.getDoctorId())
                 .build();
     }
 

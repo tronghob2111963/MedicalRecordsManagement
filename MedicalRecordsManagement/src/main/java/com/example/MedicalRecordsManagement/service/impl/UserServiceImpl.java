@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final DoctorRepository doctorRepository;
     private final MailService mailService;
+
 
     @Override
     public PageResponse<?> getAllUser(int pageNo, int pageSize, String sortBy) {
@@ -69,7 +71,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-
     @Override
     public UserResponseDTO findByUsername(String username) {
         log.info("Finding user with username: {}", username);
@@ -91,28 +92,24 @@ public class UserServiceImpl implements UserService {
     public long save(UserCreationRequest req) {
         log.info("Saving user with username: {}", req.getUsername());
         User userByUsername = userRepository.findByUsername(req.getUsername());
-
         // Check if user with username already exists
         if (userByUsername != null) {
             log.error("User with username {} already exists", req.getUsername());
             throw new IllegalArgumentException("User with this username already exists");
         }
-
         User user = new User();
         user.setUsername(req.getUsername());
         String rawPassword = req.getPassword();
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setRole(req.getRole());
+        user.setDoctorId(req.getDoctorId());
         userRepository.save(user);
 
         //Pick up email from database by license number
         String email  = doctorRepository.findEmailByLicenseNumber(user.getUsername());
-
-        //Check if email is not null
         if (email != null && user.getId() != null) {
             try {
                 log.info("Attempting to send confirmation email to: {}", email);
-
                 //gọi hàm sendEmailConfirm trong MailService
                 mailService.sendEmailConfirm(
                         email,
@@ -150,7 +147,6 @@ public class UserServiceImpl implements UserService {
                 .role(String.valueOf(user.getRole()))
                 .build();
     }
-
     @Override
     public void delete(Long id) {
         log.info("Deleting user with id: {}", id);

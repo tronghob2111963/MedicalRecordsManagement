@@ -1,0 +1,204 @@
+<!-- doctor-info.component.html -->
+<div class="doctor-info-container">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <i class="fas fa-user-md"></i>
+                Thông tin cá nhân
+            </h2>
+            <div class="header-actions">
+                <button class="btn btn-primary" (click)="toggleEdit()" [disabled]="loading" *ngIf="!isEditing">
+                    <i class="fas fa-edit"></i>
+                    Chỉnh sửa
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="loading-container">
+                <div class="spinner"></div>
+                <p>Đang tải thông tin...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error && !loading" class="error-container">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{ error }}
+                    <button class="btn btn-sm btn-outline-danger" (click)="refreshInfo()">
+                        Thử lại
+                    </button>
+                </div>
+            </div>
+
+            <!-- Doctor Information -->
+            <div *ngIf="doctorInfo && !loading" class="doctor-info">
+                <!-- View Mode -->
+                <div *ngIf="!isEditing" class="info-view">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label class="info-label">
+                                <i class="fas fa-user"></i>
+                                Họ và tên
+                            </label>
+                            <div class="info-value">{{ doctorInfo.full_name }}</div>
+                        </div>
+
+                        <div class="info-item">
+                            <label class="info-label">
+                                <i class="fas fa-stethoscope"></i>
+                                Chuyên khoa
+                            </label>
+                            <div class="info-value">{{ doctorInfo.specialty }}</div>
+                        </div>
+
+                        <div class="info-item">
+                            <label class="info-label">
+                                <i class="fas fa-phone"></i>
+                                Số điện thoại
+                            </label>
+                            <div class="info-value">{{ doctorInfo.phone_number }}</div>
+                        </div>
+
+                        <div class="info-item">
+                            <label class="info-label">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                            </label>
+                            <div class="info-value">{{ doctorInfo.email }}</div>
+                        </div>
+
+                        <div class="info-item">
+                            <label class="info-label">
+                                <i class="fas fa-id-card"></i>
+                                Số giấy phép hành nghề
+                            </label>
+                            <div class="info-value">{{ doctorInfo.license_Number }}</div>
+                        </div>
+
+                        <div class="info-item">
+                            <label class="info-label">
+                                <i class="fas fa-info-circle"></i>
+                                Trạng thái
+                            </label>
+                            <div class="info-value">
+                                <span class="status-badge" [class]="getStatusClass(doctorInfo.status)">
+                                    {{ getStatusDisplay(doctorInfo.status) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Mode -->
+                <div *ngIf="isEditing" class="info-edit">
+                    <form class="edit-form" (ngSubmit)="saveChanges()">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="fullName" class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Họ và tên *
+                                </label>
+                                <input id="fullName" type="text" class="form-control" [(ngModel)]="editForm.full_name"
+                                    name="fullName" required placeholder="Nhập họ và tên">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="specialty" class="form-label">
+                                    <i class="fas fa-stethoscope"></i>
+                                    Chuyên khoa *
+                                </label>
+                                <select id="specialty" class="form-control" [(ngModel)]="editForm.specialty"
+                                    name="specialty" required>
+                                    <option value="">Chọn chuyên khoa</option>
+                                    <option value="Tim mạch">Tim mạch</option>
+                                    <option value="Nội khoa">Nội khoa</option>
+                                    <option value="Ngoại khoa">Ngoại khoa</option>
+                                    <option value="Sản phụ khoa">Sản phụ khoa</option>
+                                    <option value="Nhi khoa">Nhi khoa</option>
+                                    <option value="Da liễu">Da liễu</option>
+                                    <option value="Mắt">Mắt</option>
+                                    <option value="Tai mũi họng">Tai mũi họng</option>
+                                    <option value="Thần kinh">Thần kinh</option>
+                                    <option value="Tâm thần">Tâm thần</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phoneNumber" class="form-label">
+                                    <i class="fas fa-phone"></i>
+                                    Số điện thoại *
+                                </label>
+                                <input id="phoneNumber" type="tel" class="form-control"
+                                    [(ngModel)]="editForm.phone_number" name="phoneNumber" required
+                                    placeholder="Nhập số điện thoại">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email *
+                                </label>
+                                <input id="email" type="email" class="form-control" [(ngModel)]="editForm.email"
+                                    name="email" required placeholder="Nhập email">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="licenseNumber" class="form-label">
+                                    <i class="fas fa-id-card"></i>
+                                    Số giấy phép hành nghề *
+                                </label>
+                                <input id="licenseNumber" type="text" class="form-control"
+                                    [(ngModel)]="editForm.license_Number" name="licenseNumber" required
+                                    placeholder="Nhập số giấy phép">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="status" class="form-label">
+                                    <i class="fas fa-info-circle"></i>
+                                    Trạng thái
+                                </label>
+                                <select id="status" class="form-control" [(ngModel)]="editForm.status" name="status"
+                                    disabled>
+                                    <option value="active">Hoạt động</option>
+                                    <option value="inactive">Không hoạt động</option>
+                                    <option value="pending">Đang chờ duyệt</option>
+                                    <option value="suspended">Tạm dừng</option>
+                                </select>
+                                <small class="form-text text-muted">
+                                    Trạng thái được quản lý bởi hệ thống
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" (click)="toggleEdit()" [disabled]="loading">
+                                <i class="fas fa-times"></i>
+                                Hủy
+                            </button>
+                            <button type="submit" class="btn btn-primary" [disabled]="loading">
+                                <i class="fas fa-save"></i>
+                                {{ loading ? 'Đang lưu...' : 'Lưu thay đổi' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- No Data State -->
+            <div *ngIf="!doctorInfo && !loading && !error" class="no-data">
+                <div class="no-data-content">
+                    <i class="fas fa-user-slash"></i>
+                    <h3>Không có thông tin</h3>
+                    <p>Không thể tải thông tin bác sĩ</p>
+                    <button class="btn btn-primary" (click)="refreshInfo()">
+                        <i class="fas fa-refresh"></i>
+                        Tải lại
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>

@@ -276,5 +276,4 @@ public class MedicalRecordImpl implements MedicalRecordService {
         return result;
     }
 
-
 }

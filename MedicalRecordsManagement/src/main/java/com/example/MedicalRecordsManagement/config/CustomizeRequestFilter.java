@@ -29,6 +29,7 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserServiceDetail userDetailsService;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("{} {}", request.getMethod(), request.getRequestURI());
@@ -66,16 +67,12 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
                     userDetails, null, userDetails.getAuthorities()
             );
             // Set details for the authentication object
-
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             securityContext.setAuthentication(authentication);
             SecurityContextHolder.setContext(securityContext);
             filterChain.doFilter(request, response);
             return;
-
         }
-
-
         filterChain.doFilter(request, response);
     }
 }

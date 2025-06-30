@@ -76,7 +76,7 @@ export class LoginComponent {
         this.router.navigate(['/admin']);
         break;
       case 'DOCTOR':
-        this.router.navigate(['/patient']);
+        this.router.navigate(['/doctor-page']);
         break;
       default:
         this.router.navigate(['/dashboard']);

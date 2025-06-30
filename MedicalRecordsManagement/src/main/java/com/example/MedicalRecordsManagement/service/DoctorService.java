@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 public interface DoctorService {
     PageResponse<?> getAllDoctors(int pageNo, int pageSize, String sortBy);
     DoctorResponseDTO getDoctorById(Long id);
-    DoctorResponseDTO createDoctor(DoctorRequestDTO doctorDTO);
+    Long createDoctor(DoctorRequestDTO doctorDTO);
     DoctorResponseDTO updateDoctor(Long id, DoctorRequestDTO doctorDTO);
     void deleteDoctor(Long id);
 

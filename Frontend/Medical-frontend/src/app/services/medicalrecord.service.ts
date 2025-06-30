@@ -54,7 +54,7 @@ export interface ResponseData<T> {
   providedIn: 'root'
 })
 export class MedicalrecordService {
-  private readonly baseUrl = 'http://localhost:8081/medical-records'; // Adjust base URL as needed
+  private readonly baseUrl = 'http://localhost:8082/medical-records'; // Adjust base URL as needed
 
   constructor(private http: HttpClient) { }
 
@@ -125,7 +125,7 @@ export class MedicalrecordService {
    */
   getMedicalRecordsByPatientId(
     patientId: number,
-    pageNo: number = 1,
+    pageNo: number = 0,
     pageSize: number = 10,
     sortBy: string = 'patient_id:asc'
   ): Observable<ResponseData<PageResponse<MedicalRecordResponse>>> {
@@ -147,19 +147,20 @@ export class MedicalrecordService {
    */
   getMedicalRecordsByDoctorId(
     doctorId: number,
-    pageNo: number = 1,
+    pageNo: number = 0,
     pageSize: number = 10,
     sortBy: string = 'doctor_id:asc'
   ): Observable<ResponseData<PageResponse<MedicalRecordResponse>>> {
     const params = new HttpParams()
-      .set('doctor_id', doctorId.toString())
+      .set('doctorId', doctorId.toString())
       .set('pageNo', pageNo.toString())
       .set('pageSize', pageSize.toString())
       .set('sortBy', sortBy);
 
     return this.http.get<ResponseData<PageResponse<MedicalRecordResponse>>>(
-      `${this.baseUrl}/doctor-record/${doctorId}`,
-      { params }
+      `${this.baseUrl}/doctor-record/`,
+      { ...this.apiConfig,
+        params }
     );
   }
 
@@ -203,7 +204,7 @@ export class MedicalrecordService {
    * Check if response is successful
    */
   isSuccessResponse<T>(response: ResponseData<T>): boolean {
-    return response.code === 200;
+    return response.status === 200;
   }
 
   /**
